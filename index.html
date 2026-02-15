@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Salty</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Floating Background -->
+<div class="floating-bg">
+  <span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span>
+</div>
+
+<!-- Top Navigation -->
+<nav class="top-nav">
+  <a href="#" data-page="main" class="active">Main</a>
+  <a href="#" data-page="games">Games</a>
+  <a href="#" data-page="movies">Movies</a>
+</nav>
+
+<!-- MAIN PAGE -->
+<section id="mainPage" class="page active">
+  <div class="hero">
+    <h2>This website so buns🥀🥀💔</h2>
+    <p>I guess noel is tuff</p>
+  </div>
+</section>
+
+<!-- GAMES PAGE -->
+<section id="gamesPage" class="page">
+  <h2 class="section-title">Games</h2>
+  <div id="gamesContainer"></div>
+</section>
+
+<!-- MOVIES PAGE -->
+<section id="moviesPage" class="page">
+  <h2 class="section-title">Movies</h2>
+  <div class="movies-grid">
+
+    <div class="movie-card" data-link="https://drive.google.com">
+      <img src="images/movies/deadpool.png">
+      <h3>Deadpool</h3>
+    </div>
+
+    <div class="movie-card" data-link="https://drive.google.com">
+      <img src="images/movies/shrek.jpg">
+      <h3>Shrek</h3>
+    </div>
+
+  </div>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>

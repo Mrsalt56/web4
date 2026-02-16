@@ -411,20 +411,19 @@ if (sendReportBtn) {
 }
 
 // =====================
-// CONNECT QUICK ACTIONS
+// QUICK ACTIONS (FIXED)
 // =====================
 
-const actSuggest = document.getElementById("actSuggest");
-const actReport = document.getElementById("actReport");
+document.addEventListener("click", e => {
 
-if (actSuggest) {
-  actSuggest.addEventListener("click", () => {
+  // Open Suggest
+  if (e.target.id === "actSuggest") {
     document.getElementById("suggestionForm").style.display = "flex";
-  });
-}
+  }
 
-if (actReport) {
-  actReport.addEventListener("click", () => {
+  // Open Report
+  if (e.target.id === "actReport") {
     document.getElementById("reportForm").style.display = "flex";
-  });
-}
+  }
+
+});

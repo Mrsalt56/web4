@@ -99,10 +99,34 @@ body {
 }
 
 .games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  display: flex;
   gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+  scroll-behavior: smooth;
 }
+
+/* Make scrollbar visible */
+.games-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.games-grid::-webkit-scrollbar-track {
+  background: #111;
+  border-radius: 10px;
+}
+
+.games-grid::-webkit-scrollbar-thumb {
+  background: #0078ff;
+  border-radius: 10px;
+}
+
+/* Stop cards from shrinking */
+.game-card {
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
 
 .game-card {
   background: #111;
@@ -155,4 +179,8 @@ body {
 .movie-card h3 {
   padding: 10px;
   font-size: 1rem;
+}
+
+.games-grid {
+  display: grid;
 }

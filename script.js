@@ -183,29 +183,6 @@ for (let genre in genres) {
   container.appendChild(section);
 }
 
-// ============================
-// ACTIVITIES (FROM OLD SIDEBAR)
-// ============================
-
-// Session Timer
-(() => {
-  const start = Date.now();
-
-  function tick() {
-    const s = Math.floor((Date.now() - start) / 1000);
-    const hh = String(Math.floor(s / 3600)).padStart(2, "0");
-    const mm = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
-    const ss = String(s % 60).padStart(2, "0");
-
-    const el = document.getElementById("sessionTimer");
-    if (el) el.textContent = `${hh}:${mm}:${ss}`;
-  }
-
-  tick();
-  setInterval(tick, 1000);
-})();
-
-
 // Shoutout Queue (Firebase)
 const firebaseConfig = {
   apiKey: "AIzaSyDyk5FAyCRyAn6ll5_nfSV5e16mvi1l-n4",
@@ -256,21 +233,6 @@ if (submitBtn) {
 }
 
 
-// Display Queue
-db.ref("shoutouts").orderByChild("timestamp").on("value", snap => {
-
-  if (!queueList) return;
-
-  queueList.innerHTML = "";
-
-  snap.forEach(child => {
-
-    const li = document.createElement("li");
-    li.textContent = child.val().name;
-
-    queueList.appendChild(li);
-  });
-});
 
 // ==========================
 // ACTIVITIES DROPDOWNS
@@ -445,5 +407,24 @@ if (sendReportBtn) {
 
     alert("Sent!");
     document.getElementById("reportForm").style.display = "none";
+  });
+}
+
+// =====================
+// CONNECT QUICK ACTIONS
+// =====================
+
+const actSuggest = document.getElementById("actSuggest");
+const actReport = document.getElementById("actReport");
+
+if (actSuggest) {
+  actSuggest.addEventListener("click", () => {
+    document.getElementById("suggestionForm").style.display = "flex";
+  });
+}
+
+if (actReport) {
+  actReport.addEventListener("click", () => {
+    document.getElementById("reportForm").style.display = "flex";
   });
 }

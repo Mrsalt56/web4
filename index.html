@@ -511,8 +511,99 @@
       </div>
     </div>
 
-  </div>
+<!-- QUICK ACTIONS -->
+<div class="activity-drop" data-open="false">
 
+  <button class="activity-head">
+    ⚡ Quick Actions
+    <span class="arrow">▼</span>
+  </button>
+
+  <div class="activity-body">
+
+    <button id="actSuggest">💡 Suggest a Game</button>
+    <button id="actReport">🚩 Report a Problem</button>
+
+  </div>
+</div>
+
+
+<!-- COMMUNITY -->
+<div class="activity-drop" data-open="false">
+
+  <button class="activity-head">
+    👥 Community
+    <span class="arrow">▼</span>
+  </button>
+
+  <div class="activity-body">
+
+    <a
+      href="https://discord.gg/qJn2PgFbdH"
+      target="_blank"
+      class="community-link"
+    >
+      💬 Join Discord
+    </a>
+
+  </div>
+</div>
+
+
+<!-- QUESTIONS -->
+<div class="activity-drop" data-open="false">
+
+  <button class="activity-head">
+    ❓ Questions
+    <span class="arrow">▼</span>
+  </button>
+
+  <div class="activity-body">
+
+    <!-- YES / NO -->
+    <div class="question-box">
+
+      <h4>Yes / No</h4>
+
+      <p id="ynText"></p>
+
+      <div class="q-btns">
+        <button id="ynA"></button>
+        <button id="ynB"></button>
+      </div>
+
+      <div id="ynResults" hidden>
+        <p><span id="ynLabelA"></span>: <span id="ynPctA"></span>%</p>
+        <p><span id="ynLabelB"></span>: <span id="ynPctB"></span>%</p>
+      </div>
+
+    </div>
+
+
+    <!-- WOULD YOU RATHER -->
+    <div class="question-box">
+
+      <h4>Would You Rather</h4>
+
+      <p id="wyrText"></p>
+
+      <div class="q-btns">
+        <button id="wyrA"></button>
+        <button id="wyrB"></button>
+      </div>
+
+      <div id="wyrResults" hidden>
+        <p><span id="wyrLabelA"></span>: <span id="wyrPctA"></span>%</p>
+        <p><span id="wyrLabelB"></span>: <span id="wyrPctB"></span>%</p>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+    
+  </div>
 </section>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>

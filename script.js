@@ -381,3 +381,41 @@ db.ref("shoutouts")
     });
 
   });
+
+// ========================
+// QUICK ACTIONS
+// ========================
+
+const actSuggest = document.getElementById("actSuggest");
+const actReport = document.getElementById("actReport");
+
+const suggestModal = document.getElementById("suggestionForm");
+const reportModal = document.getElementById("reportForm");
+
+if (actSuggest && suggestModal) {
+  actSuggest.addEventListener("click", () => {
+    suggestModal.style.display = "flex";
+  });
+}
+
+if (actReport && reportModal) {
+  actReport.addEventListener("click", () => {
+    reportModal.style.display = "flex";
+  });
+}
+
+fetch(webhookURL, {
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({
+    content:`🎮 New Game Suggestion: ${name}`
+  })
+});
+
+fetch(reportWebhookURL, {
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({
+    content:`🚨 Problem: ${title}`
+  })
+});

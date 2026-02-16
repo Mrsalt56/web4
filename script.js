@@ -385,40 +385,68 @@ db.ref("shoutouts")
 
   });
 
-// ========================
-// QUICK ACTIONS
-// ========================
+// =====================
+// WEBHOOKS (FROM OLD)
+// =====================
 
-const actSuggest = document.getElementById("actSuggest");
-const actReport = document.getElementById("actReport");
+const webhookURL = "https://discord.com/api/webhooks/1442643918356480091/UUR5lCKDC2OUBI5xQWeWMO_vwRiCXgFswnbWOoC2OWX2iCzSintVVQFCu1xFzuCj8ljq";
+const reportWebhookURL = "https://discord.com/api/webhooks/1442642641576525854/VinflwdNekq4_nVAPn7R4XyQwHrUtqbobeu2HMSuzDEvOHInYxIjnqyi4hH8pKuE6lxU";
 
-const suggestModal = document.getElementById("suggestionForm");
-const reportModal = document.getElementById("reportForm");
+const sendBtn = document.getElementById("sendSuggestion");
+const sendReportBtn = document.getElementById("sendReport");
 
-if (actSuggest && suggestModal) {
-  actSuggest.addEventListener("click", () => {
-    suggestModal.style.display = "flex";
+const closeBtns = document.querySelectorAll(".modal .close");
+
+
+// Close modals
+closeBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    btn.closest(".modal").style.display = "none";
+  });
+});
+
+
+// Suggest Send
+if (sendBtn) {
+  sendBtn.addEventListener("click", () => {
+
+    const name = document.getElementById("gameName").value.trim();
+    const details = document.getElementById("gameDetails").value.trim();
+
+    if (!name) return alert("Enter a game name");
+
+    fetch(webhookURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `🎮 New Suggestion\nGame: ${name}\nDetails: ${details || "None"}`
+      })
+    });
+
+    alert("Sent!");
+    document.getElementById("suggestionForm").style.display = "none";
   });
 }
 
-if (actReport && reportModal) {
-  actReport.addEventListener("click", () => {
-    reportModal.style.display = "flex";
+
+// Report Send
+if (sendReportBtn) {
+  sendReportBtn.addEventListener("click", () => {
+
+    const title = document.getElementById("problemTitle").value.trim();
+    const details = document.getElementById("problemDetails").value.trim();
+
+    if (!title) return alert("Enter a title");
+
+    fetch(reportWebhookURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `🚨 Report\nTitle: ${title}\nDetails: ${details || "None"}`
+      })
+    });
+
+    alert("Sent!");
+    document.getElementById("reportForm").style.display = "none";
   });
 }
-
-fetch(webhookURL, {
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({
-    content:`🎮 New Game Suggestion: ${name}`
-  })
-});
-
-fetch(reportWebhookURL, {
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({
-    content:`🚨 Problem: ${title}`
-  })
-});

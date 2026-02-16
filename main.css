@@ -197,3 +197,57 @@ body {
   width: 100%;
 }
 
+/* ACTIVITIES PAGE */
+
+.activities-container {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.activity-box {
+  background: #111;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,120,255,0.2);
+}
+
+.activity-box h3 {
+  margin-bottom: 15px;
+  color: #4da6ff;
+}
+
+.activity-box input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+.activity-box button {
+  width: 100%;
+  padding: 8px;
+  background: #0078ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#queueList li {
+  background: #eee;
+  color: black;
+  padding: 6px;
+  margin-top: 6px;
+  border-radius: 5px;
+}
+
+#sessionTimer {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #0078ff;
+}

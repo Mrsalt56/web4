@@ -182,3 +182,92 @@ for (let genre in genres) {
   section.appendChild(grid);
   container.appendChild(section);
 }
+
+// ============================
+// ACTIVITIES (FROM OLD SIDEBAR)
+// ============================
+
+// Session Timer
+(() => {
+  const start = Date.now();
+
+  function tick() {
+    const s = Math.floor((Date.now() - start) / 1000);
+    const hh = String(Math.floor(s / 3600)).padStart(2, "0");
+    const mm = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+    const ss = String(s % 60).padStart(2, "0");
+
+    const el = document.getElementById("sessionTimer");
+    if (el) el.textContent = `${hh}:${mm}:${ss}`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+
+
+// Shoutout Queue (Firebase)
+const firebaseConfig = {
+  apiKey: "AIzaSyDyk5FAyCRyAn6ll5_nfSV5e16mvi1l-n4",
+  authDomain: "mrsalt56-e6066.firebaseapp.com",
+  databaseURL: "https://mrsalt56-e6066-default-rtdb.firebaseio.com",
+  projectId: "mrsalt56-e6066",
+  storageBucket: "mrsalt56-e6066.appspot.com",
+  messagingSenderId: "716178119141",
+  appId: "1:716178119141:web:2c39c7f79213699a38b70c"
+};
+
+// Firebase Init
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const submitBtn = document.getElementById("submitBtn");
+const userNameInput = document.getElementById("userName");
+const queueList = document.getElementById("queueList");
+const cooldownMsg = document.getElementById("cooldownMsg");
+
+const COOLDOWN = 60 * 1000;
+
+
+// Submit Shoutout
+if (submitBtn) {
+  submitBtn.addEventListener("click", () => {
+
+    const name = userNameInput.value.trim();
+    if (!name) return alert("Enter a name");
+
+    const last = localStorage.getItem("lastShoutout") || 0;
+
+    if (Date.now() - last < COOLDOWN) {
+      cooldownMsg.textContent = "Wait before submitting again.";
+      return;
+    }
+
+    localStorage.setItem("lastShoutout", Date.now());
+    cooldownMsg.textContent = "";
+
+    db.ref("shoutouts").push({
+      name,
+      timestamp: Date.now()
+    });
+
+    userNameInput.value = "";
+  });
+}
+
+
+// Display Queue
+db.ref("shoutouts").orderByChild("timestamp").on("value", snap => {
+
+  if (!queueList) return;
+
+  queueList.innerHTML = "";
+
+  snap.forEach(child => {
+
+    const li = document.createElement("li");
+    li.textContent = child.val().name;
+
+    queueList.appendChild(li);
+  });
+});

@@ -101,16 +101,25 @@ body {
   padding-left: 5px;
 }
 
-.games-grid {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding: 10px 10px 15px;
-  scroll-behavior: smooth;
-  align-items: flex-start;
-
-  max-width: 100%;
+/* Scrollbar styling */
+.games-grid::-webkit-scrollbar {
+  height: 8px;
 }
+
+.games-grid::-webkit-scrollbar-track {
+  background: #000;      /* matches site background */
+  border-radius: 10px;
+}
+
+.games-grid::-webkit-scrollbar-thumb {
+  background: #555;      /* gray slider */
+  border-radius: 10px;
+}
+
+.games-grid::-webkit-scrollbar-thumb:hover {
+  background: #777;      /* lighter gray on hover */
+}
+
 
 /* Stop cards from shrinking */
 .game-card {

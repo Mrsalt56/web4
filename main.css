@@ -342,3 +342,52 @@ body {
   text-align: center;
   color: #4da6ff;
 }
+
+/* QUICK ACTIONS + COMMUNITY */
+
+.activity-body button {
+  margin-bottom: 10px;
+}
+
+.community-link {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  background: #0078ff;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.community-link:hover {
+  background: #005ecb;
+}
+
+
+/* QUESTIONS */
+
+.question-box {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.question-box h4 {
+  margin-bottom: 10px;
+  color: #4da6ff;
+}
+
+.q-btns {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.q-btns button {
+  flex: 1;
+  background: #222;
+}
+
+.q-btns button:hover {
+  background: #0078ff;
+}

@@ -251,3 +251,94 @@ body {
   text-align: center;
   color: #0078ff;
 }
+
+/* ACTIVITIES DROPDOWNS */
+
+.activities-container {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.activity-drop {
+  background: #111;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.activity-head {
+  width: 100%;
+  background: transparent;
+  color: white;
+  border: none;
+  padding: 18px 20px;
+
+  font-size: 1.1rem;
+  font-weight: 600;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.activity-head:hover {
+  background: rgba(0,120,255,0.15);
+}
+
+.activity-body {
+  display: none;
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.activity-drop[data-open="true"] .activity-body {
+  display: block;
+}
+
+.activity-drop[data-open="true"] .arrow {
+  transform: rotate(180deg);
+}
+
+.arrow {
+  transition: transform 0.2s ease;
+}
+
+
+/* Activity Inputs */
+
+.activity-body input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+.activity-body button {
+  width: 100%;
+  padding: 8px;
+  background: #0078ff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#queueList li {
+  background: #eee;
+  color: black;
+  padding: 6px;
+  margin-top: 6px;
+  border-radius: 5px;
+}
+
+#sessionTimer {
+  font-size: 2rem;
+  text-align: center;
+  color: #4da6ff;
+}

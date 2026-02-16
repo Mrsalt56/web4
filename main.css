@@ -105,25 +105,11 @@ body {
   display: flex;
   gap: 20px;
   overflow-x: auto;
-  padding-bottom: 15px;
+  padding: 10px 10px 15px;
   scroll-behavior: smooth;
-  align-items: flex-start; /* stops stretching */
-}
+  align-items: flex-start;
 
-
-/* Make scrollbar visible */
-.games-grid::-webkit-scrollbar {
-  height: 8px;
-}
-
-.games-grid::-webkit-scrollbar-track {
-  background: #111;
-  border-radius: 10px;
-}
-
-.games-grid::-webkit-scrollbar-thumb {
-  background: #0078ff;
-  border-radius: 10px;
+  max-width: 100%;
 }
 
 /* Stop cards from shrinking */
@@ -145,10 +131,6 @@ body {
   flex-shrink: 0;    /* prevents stretching */
 }
 
-
-.game-card:hover {
-  transform: translateY(-5px);
-}
 
 .game-card img {
   width: 100%;
@@ -193,12 +175,10 @@ body {
   font-size: 1rem;
 }
 
-.games-grid {
-  display: grid;
-}
 
-/* Center games page content */
 #gamesPage {
   max-width: 1300px;
   margin: 0 auto;
+  width: 100%;
 }
+

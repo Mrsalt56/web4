@@ -475,29 +475,46 @@
 
   <div class="activities-container">
 
-    <!-- SHOUTOUT QUEUE -->
-    <div class="activity-box">
-      <h3>📢 Shoutout Queue</h3>
+    <!-- SHOUTOUT DROPDOWN -->
+    <div class="activity-drop" data-open="false">
 
-      <input type="text" id="userName" placeholder="Enter your name">
-      <button id="submitBtn">Submit</button>
+      <button class="activity-head">
+        📢 Shoutout Queue
+        <span class="arrow">▼</span>
+      </button>
 
-      <p id="cooldownMsg"></p>
+      <div class="activity-body">
 
-      <ul id="queueList"></ul>
+        <input type="text" id="userName" placeholder="Enter your name">
+        <button id="submitBtn">Submit</button>
+
+        <p id="cooldownMsg"></p>
+
+        <ul id="queueList"></ul>
+
+      </div>
     </div>
 
 
-    <!-- SESSION TIMER -->
-    <div class="activity-box">
-      <h3>⏱ Time On Site</h3>
-      <div id="sessionTimer">00:00:00</div>
+    <!-- TIMER DROPDOWN -->
+    <div class="activity-drop" data-open="false">
+
+      <button class="activity-head">
+        ⏱ Time On Site
+        <span class="arrow">▼</span>
+      </button>
+
+      <div class="activity-body">
+
+        <div id="sessionTimer">00:00:00</div>
+
+      </div>
     </div>
 
   </div>
 
 </section>
-  
+
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="script.js"></script>

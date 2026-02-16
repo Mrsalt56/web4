@@ -271,3 +271,120 @@ db.ref("shoutouts").orderByChild("timestamp").on("value", snap => {
     queueList.appendChild(li);
   });
 });
+
+// ==========================
+// ACTIVITIES DROPDOWNS
+// ==========================
+
+document.querySelectorAll(".activity-drop").forEach(drop => {
+
+  const head = drop.querySelector(".activity-head");
+
+  head.addEventListener("click", () => {
+
+    const open = drop.dataset.open === "true";
+
+    drop.dataset.open = open ? "false" : "true";
+  });
+});
+
+
+// ==========================
+// SESSION TIMER
+// ==========================
+
+(() => {
+
+  const start = Date.now();
+
+  function tick() {
+
+    const s = Math.floor((Date.now() - start) / 1000);
+
+    const hh = String(Math.floor(s / 3600)).padStart(2, "0");
+    const mm = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+    const ss = String(s % 60).padStart(2, "0");
+
+    const el = document.getElementById("sessionTimer");
+
+    if (el) el.textContent = `${hh}:${mm}:${ss}`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+
+})();
+
+
+// ==========================
+// SHOUTOUT QUEUE (MAX 10)
+// ==========================
+
+const submitBtn = document.getElementById("submitBtn");
+const userNameInput = document.getElementById("userName");
+const queueList = document.getElementById("queueList");
+const cooldownMsg = document.getElementById("cooldownMsg");
+
+const COOLDOWN = 60 * 1000;
+
+
+// Submit
+if (submitBtn) {
+
+  submitBtn.addEventListener("click", () => {
+
+    const name = userNameInput.value.trim();
+
+    if (!name) return alert("Enter a name");
+
+    const last = localStorage.getItem("lastShoutout") || 0;
+
+    if (Date.now() - last < COOLDOWN) {
+
+      cooldownMsg.textContent = "Wait before submitting again.";
+      return;
+    }
+
+    localStorage.setItem("lastShoutout", Date.now());
+    cooldownMsg.textContent = "";
+
+    db.ref("shoutouts").push({
+      name,
+      timestamp: Date.now()
+    });
+
+    userNameInput.value = "";
+  });
+}
+
+
+// Display First 10 Only
+db.ref("shoutouts")
+  .orderByChild("timestamp")
+  .on("value", snap => {
+
+    if (!queueList) return;
+
+    const list = [];
+
+    snap.forEach(child => {
+      list.push(child.val());
+    });
+
+    // Oldest first
+    list.sort((a, b) => a.timestamp - b.timestamp);
+
+    // First 10 only
+    const visible = list.slice(0, 10);
+
+    queueList.innerHTML = "";
+
+    visible.forEach(item => {
+
+      const li = document.createElement("li");
+      li.textContent = item.name;
+
+      queueList.appendChild(li);
+    });
+
+  });

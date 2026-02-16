@@ -104,7 +104,9 @@ body {
   overflow-x: auto;
   padding-bottom: 15px;
   scroll-behavior: smooth;
+  align-items: flex-start; /* stops stretching */
 }
+
 
 /* Make scrollbar visible */
 .games-grid::-webkit-scrollbar {
@@ -134,7 +136,12 @@ body {
   overflow: hidden;
   cursor: pointer;
   transition: 0.2s;
+
+  width: 160px;       /* force normal size */
+  min-width: 160px;  /* keeps scroll working */
+  flex-shrink: 0;    /* prevents stretching */
 }
+
 
 .game-card:hover {
   transform: translateY(-5px);
@@ -142,9 +149,11 @@ body {
 
 .game-card img {
   width: 100%;
-  height: 140px;
+  height: 120px;     /* fixed height */
   object-fit: cover;
+  display: block;
 }
+
 
 .game-card h3 {
   padding: 10px;

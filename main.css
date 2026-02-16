@@ -391,3 +391,46 @@ body {
 .q-btns button:hover {
   background: #0078ff;
 }
+
+/* =====================
+   MODALS
+===================== */
+
+.modal {
+  display: none; /* HIDE BY DEFAULT */
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,0.75);
+
+  justify-content: center;
+  align-items: center;
+
+  z-index: 10000;
+}
+
+.modal-content {
+  background: #111;
+  padding: 25px;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 420px;
+  position: relative;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+}
+
+.modal .close {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  font-size: 22px;
+  cursor: pointer;
+}

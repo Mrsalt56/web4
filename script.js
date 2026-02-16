@@ -411,10 +411,10 @@ if (sendReportBtn) {
 }
 
 // =====================
-// QUICK ACTIONS (FINAL)
+// QUICK ACTIONS (FINAL - CLEAN)
 // =====================
 
-document.addEventListener("click", e => {
+document.addEventListener("click", function (e) {
 
   // Open Suggest
   if (e.target.closest("#actSuggest")) {
@@ -426,7 +426,7 @@ document.addEventListener("click", e => {
     document.getElementById("reportForm").style.display = "flex";
   }
 
-  // Close when clicking outside modal
+  // Close when clicking background
   if (e.target.classList.contains("modal")) {
     e.target.style.display = "none";
   }

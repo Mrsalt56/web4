@@ -242,14 +242,14 @@ document.querySelectorAll(".activity-drop").forEach(drop => {
 
   const head = drop.querySelector(".activity-head");
 
-  head.addEventListener("click", () => {
+  head.addEventListener("click", e => {
 
-    const open = drop.dataset.open === "true";
+  // Prevent interfering with inner buttons
+  e.stopPropagation();
 
-    drop.dataset.open = open ? "false" : "true";
-  });
+  const open = drop.dataset.open === "true";
+  drop.dataset.open = open ? "false" : "true";
 });
-
 
 // ==========================
 // SESSION TIMER
@@ -411,19 +411,24 @@ if (sendReportBtn) {
 }
 
 // =====================
-// QUICK ACTIONS (FIXED)
+// QUICK ACTIONS (FINAL)
 // =====================
 
 document.addEventListener("click", e => {
 
   // Open Suggest
-  if (e.target.id === "actSuggest") {
+  if (e.target.closest("#actSuggest")) {
     document.getElementById("suggestionForm").style.display = "flex";
   }
 
   // Open Report
-  if (e.target.id === "actReport") {
+  if (e.target.closest("#actReport")) {
     document.getElementById("reportForm").style.display = "flex";
+  }
+
+  // Close when clicking outside modal
+  if (e.target.classList.contains("modal")) {
+    e.target.style.display = "none";
   }
 
 });

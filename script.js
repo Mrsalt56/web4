@@ -320,13 +320,6 @@ document.querySelectorAll(".activity-drop").forEach(drop => {
 // SHOUTOUT QUEUE (MAX 10)
 // ==========================
 
-const submitBtn = document.getElementById("submitBtn");
-const userNameInput = document.getElementById("userName");
-const queueList = document.getElementById("queueList");
-const cooldownMsg = document.getElementById("cooldownMsg");
-
-const COOLDOWN = 60 * 1000;
-
 
 // Submit
 if (submitBtn) {

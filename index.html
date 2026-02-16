@@ -606,6 +606,39 @@
   </div>
 </section>
 
+<!-- SUGGEST GAME MODAL -->
+<div id="suggestionForm" class="modal">
+  <div class="modal-content">
+
+    <span class="close">&times;</span>
+
+    <h3>Suggest a Game</h3>
+
+    <input id="gameName" placeholder="Game name">
+    <textarea id="gameDetails" placeholder="Details (optional)"></textarea>
+
+    <button id="sendSuggestion">Send</button>
+
+  </div>
+</div>
+
+
+<!-- REPORT PROBLEM MODAL -->
+<div id="reportForm" class="modal">
+  <div class="modal-content">
+
+    <span class="close">&times;</span>
+
+    <h3>Report a Problem</h3>
+
+    <input id="problemTitle" placeholder="Problem title">
+    <textarea id="problemDetails" placeholder="Explain the issue"></textarea>
+
+    <button id="sendReport">Send</button>
+
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="script.js"></script>

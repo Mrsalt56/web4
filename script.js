@@ -1,3 +1,6 @@
+const webhookURL = "https://discord.com/api/webhooks/1442643918356480091/UUR5lCKDC2OUBI5xQWeWMO_vwRiCXgFswnbWOoC2OWX2iCzSintVVQFCu1xFzuCj8ljq";
+const reportWebhookURL = "https://discord.com/api/webhooks/1442642641576525854/VinflwdNekq4_nVAPn7R4XyQwHrUtqbobeu2HMSuzDEvOHInYxIjnqyi4hH8pKuE6lxU";
+
 // PAGE SWITCHING
 const navLinks = document.querySelectorAll(".top-nav a");
 const pages = document.querySelectorAll(".page");

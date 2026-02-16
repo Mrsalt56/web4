@@ -57,10 +57,9 @@ body {
   color: #0078ff;
 }
 
-/* Pages */
 .page {
   display: none;
-  padding: 40px 20px;
+  padding: 40px 40px;
 }
 
 .page.active {
@@ -96,6 +95,10 @@ body {
 .genre-title {
   font-size: 1.4rem;
   margin-bottom: 20px;
+}
+
+.genre-title {
+  padding-left: 5px;
 }
 
 .games-grid {
@@ -192,4 +195,10 @@ body {
 
 .games-grid {
   display: grid;
+}
+
+/* Center games page content */
+#gamesPage {
+  max-width: 1300px;
+  margin: 0 auto;
 }

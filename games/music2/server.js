@@ -8,7 +8,8 @@ const YT_KEY = "YOUR_YOUTUBE_API_KEY";
 
 app.use(express.static("public"));
 
-app.get("/api/ytsearch", async (req, res) => {
+// Search YouTube (multiple results)
+app.get("/api/search", async (req, res) => {
 
   const q = req.query.q;
 
@@ -16,23 +17,28 @@ app.get("/api/ytsearch", async (req, res) => {
 
     const url =
       `https://www.googleapis.com/youtube/v3/search` +
-      `?part=snippet&type=video&maxResults=1` +
+      `?part=snippet&type=video&maxResults=20` +
       `&q=${encodeURIComponent(q)}` +
       `&key=${YT_KEY}`;
 
     const r = await fetch(url);
     const data = await r.json();
 
-    if (!data.items || !data.items.length) {
-      return res.json({ videoId: null });
+    if(!data.items){
+      return res.json([]);
     }
 
-    res.json({
-      videoId: data.items[0].id.videoId
-    });
+    const results = data.items.map(v => ({
+      id: v.id.videoId,
+      title: v.snippet.title,
+      channel: v.snippet.channelTitle,
+      thumb: v.snippet.thumbnails.medium.url
+    }));
 
-  } catch (err) {
-    res.status(500).json({ error: "YouTube search failed" });
+    res.json(results);
+
+  } catch {
+    res.status(500).json([]);
   }
 
 });

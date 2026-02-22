@@ -1,5 +1,5 @@
 {
-  "name": "music-system-youtube",
+  "name": "music-system-youtube-ui",
   "version": "1.0.0",
   "type": "module",
   "main": "server.js",

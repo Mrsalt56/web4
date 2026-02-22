@@ -1,122 +1,107 @@
 
 let player;
-let playlist = [];
-let currentIndex = 0;
+let currentVideo = null;
+let isPlaying = false;
 
-const playlistDiv = document.getElementById("playlist");
-const nowPlaying = document.getElementById("nowPlaying");
-
+// YouTube
 function onYouTubeIframeAPIReady(){
 
-  player = new YT.Player("player",{
+  player = new YT.Player("ytplayer",{
     height:"0",
     width:"0",
     playerVars:{
-      autoplay:1,
-      controls:0
+      playsinline:1,
+      origin:window.location.origin
     },
     events:{
-      onStateChange:onPlayerStateChange
+      onStateChange:onStateChange
     }
   });
 
 }
 
-function onPlayerStateChange(e){
+function onStateChange(e){
 
-  if(e.data === YT.PlayerState.ENDED){
-    next();
+  if(e.data === YT.PlayerState.PLAYING){
+    isPlaying = true;
+  }
+
+  if(e.data === YT.PlayerState.PAUSED){
+    isPlaying = false;
   }
 
 }
 
-function addToPlaylist(){
+// Search
+async function search(){
 
   const q = document.getElementById("query").value;
   if(!q) return;
 
-  playlist.push(q);
-  document.getElementById("query").value = "";
+  document.getElementById("resultsTitle").innerText =
+    `Results for "${q}"`;
 
-  renderPlaylist();
+  const res = await fetch(
+    `/api/search?q=${encodeURIComponent(q)}`
+  );
 
-  if(playlist.length === 1){
-    playCurrent();
-  }
+  const data = await res.json();
+
+  render(data);
 
 }
 
-function renderPlaylist(){
+// Render grid
+function render(list){
 
-  playlistDiv.innerHTML = "";
+  const grid = document.getElementById("grid");
 
-  playlist.forEach((track,i)=>{
+  grid.innerHTML = "";
+
+  list.forEach(track=>{
 
     const div = document.createElement("div");
-    div.className = "track";
+    div.className = "card";
 
-    div.innerText =
-      (i===currentIndex ? "▶ " : "") + track;
+    div.innerHTML = `
+      <img src="${track.thumb}">
+      <div class="title">${track.title}</div>
+      <div class="artist">${track.channel}</div>
+    `;
 
     div.onclick = ()=>{
-      currentIndex = i;
-      playCurrent();
+      play(track);
     };
 
-    playlistDiv.appendChild(div);
+    grid.appendChild(div);
 
   });
 
 }
 
-async function playCurrent(){
+// Play
+function play(track){
 
-  if(!playlist.length) return;
+  currentVideo = track.id;
 
-  const query =
-    playlist[currentIndex] + " official audio";
+  player.loadVideoById(track.id);
 
-  const res = await fetch(
-    `/api/ytsearch?q=${encodeURIComponent(query)}`
-  );
+  document.getElementById("cover").src = track.thumb;
+  document.getElementById("song").innerText = track.title;
+  document.getElementById("artist").innerText = track.channel;
 
-  const data = await res.json();
-
-  if(!data.videoId){
-    alert("No video found");
-    return;
-  }
-
-  player.loadVideoById(data.videoId);
-
-  nowPlaying.innerText = playlist[currentIndex];
-
-  renderPlaylist();
-
+  isPlaying = true;
 }
 
-function next(){
+// Toggle
+function toggle(){
 
-  if(!playlist.length) return;
+  if(!currentVideo) return;
 
-  currentIndex++;
-
-  if(currentIndex >= playlist.length){
-    currentIndex = 0;
+  if(isPlaying){
+    player.pauseVideo();
+  }else{
+    player.playVideo();
   }
 
-  playCurrent();
-}
-
-function prev(){
-
-  if(!playlist.length) return;
-
-  currentIndex--;
-
-  if(currentIndex < 0){
-    currentIndex = playlist.length - 1;
-  }
-
-  playCurrent();
 }

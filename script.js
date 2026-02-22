@@ -249,6 +249,8 @@ document.querySelectorAll(".activity-drop").forEach(drop => {
 
   const open = drop.dataset.open === "true";
   drop.dataset.open = open ? "false" : "true";
+  });
+
 });
 
 // ==========================

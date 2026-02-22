@@ -9,7 +9,7 @@
 
       const isAlt = localStorage.getItem("is_alt_theme") === "true";
       const folder = isAlt ? "alt-theme" : "theme";
-      const themePath = `/style/${folder}/${theme}.css`;
+      const themePath = `../style/${folder}/${theme}.css`;
 
       document.documentElement.setAttribute("data-theme", theme);
 

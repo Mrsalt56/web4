@@ -1,5 +1,5 @@
 // PUT YOUR SOUNDCLOUD CLIENT ID HERE
-const CLIENT_ID = "YOUR_CLIENT_ID_HERE";
+const CLIENT_ID = "XulOmp1zs81f2G3b8I6En4nBssu7mmGO";
 
 const audio = document.getElementById("audio");
 const resultsDiv = document.getElementById("results");

@@ -1,0 +1,66 @@
+
+body{
+  margin:0;
+  background:#0f172a;
+  color:white;
+  font-family:Arial;
+}
+
+.container{
+  display:flex;
+  height:100vh;
+}
+
+.player{
+  width:30%;
+  background:#1e293b;
+  padding:20px;
+}
+
+.search{
+  flex:1;
+  padding:20px;
+}
+
+.bar{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+input{
+  flex:1;
+  padding:10px;
+  background:#334155;
+  border:none;
+  color:white;
+}
+
+button{
+  background:#2563eb;
+  border:none;
+  color:white;
+  padding:8px 15px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#1d4ed8;
+}
+
+.controls{
+  margin-top:15px;
+  display:flex;
+  gap:10px;
+}
+
+.track{
+  background:#1e293b;
+  padding:10px;
+  margin-bottom:6px;
+  cursor:pointer;
+}
+
+.track:hover{
+  background:#334155;
+}

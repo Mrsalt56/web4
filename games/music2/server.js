@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 
 const app = express();
 
-const YT_KEY = "YOUR_YOUTUBE_API_KEY";
+const YT_KEY = "AIzaSyCKq37tikxAUcWYr_c_iLcXCGw5HRf3sPc";
 
 app.use(express.static("public"));
 

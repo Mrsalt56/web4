@@ -4,11 +4,10 @@ import fetch from "node-fetch";
 
 const app = express();
 
-const YT_KEY = "AIzaSyCKq37tikxAUcWYr_c_iLcXCGw5HRf3sPc";
+const YT_KEY = "YOUR_YOUTUBE_API_KEY";
 
 app.use(express.static("public"));
 
-// Search YouTube (multiple results)
 app.get("/api/search", async (req, res) => {
 
   const q = req.query.q;

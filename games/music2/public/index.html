@@ -10,13 +10,11 @@
 
 <div class="app">
 
-  <!-- Sidebar -->
   <div class="sidebar">
     <h1>🎵 Imp Music</h1>
     <button>Search</button>
   </div>
 
-  <!-- Main -->
   <div class="main">
 
     <div class="search-bar">
@@ -32,7 +30,6 @@
 
 </div>
 
-<!-- Bottom Player -->
 <div class="player-bar">
 
   <img id="cover" src="" />
@@ -40,10 +37,18 @@
   <div class="info">
     <div id="song">Not Playing</div>
     <div id="artist"></div>
+
+    <div class="progress">
+      <span id="current">0:00</span>
+      <input type="range" id="seek" value="0">
+      <span id="duration">0:00</span>
+    </div>
   </div>
 
   <div class="controls">
+    <button onclick="prev()">⏮</button>
     <button onclick="toggle()">⏯</button>
+    <button onclick="next()">⏭</button>
   </div>
 
 </div>

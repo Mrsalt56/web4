@@ -1,9 +1,10 @@
 
 let player;
-let currentVideo = null;
+let playlist = [];
+let currentIndex = 0;
 let isPlaying = false;
+let timer = null;
 
-// YouTube
 function onYouTubeIframeAPIReady(){
 
   player = new YT.Player("ytplayer",{
@@ -14,25 +15,35 @@ function onYouTubeIframeAPIReady(){
       origin:window.location.origin
     },
     events:{
+      onReady:onReady,
       onStateChange:onStateChange
     }
   });
 
 }
 
+function onReady(){
+  console.log("Player Ready");
+}
+
 function onStateChange(e){
 
   if(e.data === YT.PlayerState.PLAYING){
     isPlaying = true;
+    startTimer();
   }
 
   if(e.data === YT.PlayerState.PAUSED){
     isPlaying = false;
+    stopTimer();
+  }
+
+  if(e.data === YT.PlayerState.ENDED){
+    next();
   }
 
 }
 
-// Search
 async function search(){
 
   const q = document.getElementById("query").value;
@@ -47,18 +58,19 @@ async function search(){
 
   const data = await res.json();
 
+  playlist = data;
+  currentIndex = 0;
+
   render(data);
 
 }
 
-// Render grid
 function render(list){
 
   const grid = document.getElementById("grid");
-
   grid.innerHTML = "";
 
-  list.forEach(track=>{
+  list.forEach((track,i)=>{
 
     const div = document.createElement("div");
     div.className = "card";
@@ -70,7 +82,8 @@ function render(list){
     `;
 
     div.onclick = ()=>{
-      play(track);
+      currentIndex = i;
+      playCurrent();
     };
 
     grid.appendChild(div);
@@ -79,10 +92,11 @@ function render(list){
 
 }
 
-// Play
-function play(track){
+function playCurrent(){
 
-  currentVideo = track.id;
+  if(!playlist.length) return;
+
+  const track = playlist[currentIndex];
 
   player.loadVideoById(track.id);
 
@@ -91,12 +105,12 @@ function play(track){
   document.getElementById("artist").innerText = track.channel;
 
   isPlaying = true;
+
 }
 
-// Toggle
 function toggle(){
 
-  if(!currentVideo) return;
+  if(!player) return;
 
   if(isPlaying){
     player.pauseVideo();
@@ -104,4 +118,97 @@ function toggle(){
     player.playVideo();
   }
 
+}
+
+function next(){
+
+  if(!playlist.length) return;
+
+  currentIndex++;
+
+  if(currentIndex >= playlist.length){
+    currentIndex = 0;
+  }
+
+  playCurrent();
+}
+
+function prev(){
+
+  if(!playlist.length) return;
+
+  currentIndex--;
+
+  if(currentIndex < 0){
+    currentIndex = playlist.length - 1;
+  }
+
+  playCurrent();
+}
+
+function startTimer(){
+
+  stopTimer();
+
+  timer = setInterval(updateProgress, 500);
+}
+
+function stopTimer(){
+
+  if(timer){
+    clearInterval(timer);
+    timer = null;
+  }
+
+}
+
+function updateProgress(){
+
+  if(!player || !isPlaying) return;
+
+  const current = player.getCurrentTime();
+  const total = player.getDuration();
+
+  if(!total) return;
+
+  const percent = (current / total) * 100;
+
+  const seek = document.getElementById("seek");
+
+  seek.value = percent;
+
+  document.getElementById("current").innerText =
+    format(current);
+
+  document.getElementById("duration").innerText =
+    format(total);
+
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+  const seek = document.getElementById("seek");
+
+  seek.addEventListener("input",()=>{
+
+    if(!player) return;
+
+    const total = player.getDuration();
+
+    const time = (seek.value / 100) * total;
+
+    player.seekTo(time,true);
+
+  });
+
+});
+
+function format(sec){
+
+  sec = Math.floor(sec);
+
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+
+  return m + ":" + (s<10?"0":"") + s;
 }

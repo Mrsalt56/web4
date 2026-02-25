@@ -1,214 +1,131 @@
 
 let player;
+let searchResults = [];
 let playlist = [];
+let recent = [];
+let currentList = [];
 let currentIndex = 0;
 let isPlaying = false;
-let timer = null;
 
 function onYouTubeIframeAPIReady(){
-
   player = new YT.Player("ytplayer",{
-    height:"0",
-    width:"0",
-    playerVars:{
-      playsinline:1,
-      origin:window.location.origin
-    },
-    events:{
-      onReady:onReady,
-      onStateChange:onStateChange
-    }
+    height:"360",
+    width:"640",
+    playerVars:{ playsinline:1, origin:window.location.origin },
+    events:{ onStateChange:onStateChange }
   });
-
-}
-
-function onReady(){
-  console.log("Player Ready");
 }
 
 function onStateChange(e){
-
-  if(e.data === YT.PlayerState.PLAYING){
-    isPlaying = true;
-    startTimer();
+  const btn = document.getElementById("playBtn");
+  if(e.data===YT.PlayerState.PLAYING){
+    isPlaying=true; btn.innerText="||";
   }
-
-  if(e.data === YT.PlayerState.PAUSED){
-    isPlaying = false;
-    stopTimer();
+  if(e.data===YT.PlayerState.PAUSED){
+    isPlaying=false; btn.innerText="▶";
   }
-
-  if(e.data === YT.PlayerState.ENDED){
-    next();
-  }
-
+  if(e.data===YT.PlayerState.ENDED) next();
 }
 
 async function search(){
-
-  const q = document.getElementById("query").value;
+  showSearch();
+  const q=document.getElementById("query").value;
   if(!q) return;
 
-  document.getElementById("resultsTitle").innerText =
-    `Results for "${q}"`;
-
-  const res = await fetch(
-    `/api/search?q=${encodeURIComponent(q)}`
-  );
-
-  const data = await res.json();
-
-  playlist = data;
-  currentIndex = 0;
-
-  render(data);
-
+  const res=await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+  searchResults=await res.json();
+  currentList=searchResults;
+  render(searchResults,"grid",true);
 }
 
-function render(list){
-
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
-
+function render(list,id,canAdd=false){
+  const grid=document.getElementById(id);
+  grid.innerHTML="";
   list.forEach((track,i)=>{
+    const div=document.createElement("div");
+    div.className="card";
 
-    const div = document.createElement("div");
-    div.className = "card";
+    let btn="";
+    if(canAdd) btn=`<button class="add-btn" onclick="addToPlaylist(${i})">+</button>`;
+    if(id==="playlistGrid") btn=`<button class="remove-btn" onclick="removeFromPlaylist(${i})">-</button>`;
 
-    div.innerHTML = `
+    div.innerHTML=`${btn}
       <img src="${track.thumb}">
       <div class="title">${track.title}</div>
-      <div class="artist">${track.channel}</div>
-    `;
+      <div class="artist">${track.channel}</div>`;
 
-    div.onclick = ()=>{
-      currentIndex = i;
+    div.onclick=(e)=>{
+      if(e.target.classList.contains("add-btn")||e.target.classList.contains("remove-btn")) return;
+      currentList=list;
+      currentIndex=i;
       playCurrent();
     };
 
     grid.appendChild(div);
-
   });
+}
 
+function addToPlaylist(i){
+  const t=searchResults[i];
+  if(!playlist.find(x=>x.id===t.id)) playlist.push(t);
+  alert("Added to playlist");
+}
+
+function removeFromPlaylist(i){
+  playlist.splice(i,1);
+  render(playlist,"playlistGrid");
 }
 
 function playCurrent(){
-
-  if(!playlist.length) return;
-
-  const track = playlist[currentIndex];
-
-  player.loadVideoById(track.id);
-
-  document.getElementById("cover").src = track.thumb;
-  document.getElementById("song").innerText = track.title;
-  document.getElementById("artist").innerText = track.channel;
-
-  isPlaying = true;
-
+  if(!currentList.length) return;
+  const t=currentList[currentIndex];
+  player.loadVideoById(t.id);
+  document.getElementById("cover").src=t.thumb;
+  document.getElementById("song").innerText=t.title;
+  document.getElementById("artist").innerText=t.channel;
+  document.getElementById("videoDrawer").classList.remove("hidden");
+  document.getElementById("openVideoBtn").classList.add("hidden");
+  if(!recent.find(x=>x.id===t.id)) recent.unshift(t);
 }
 
-function toggle(){
-
-  if(!player) return;
-
-  if(isPlaying){
-    player.pauseVideo();
-  }else{
-    player.playVideo();
-  }
-
-}
+function toggle(){ isPlaying?player.pauseVideo():player.playVideo(); }
 
 function next(){
-
-  if(!playlist.length) return;
-
-  currentIndex++;
-
-  if(currentIndex >= playlist.length){
-    currentIndex = 0;
-  }
-
+  if(!currentList.length) return;
+  currentIndex=(currentIndex+1)%currentList.length;
   playCurrent();
 }
 
 function prev(){
-
-  if(!playlist.length) return;
-
-  currentIndex--;
-
-  if(currentIndex < 0){
-    currentIndex = playlist.length - 1;
-  }
-
+  if(!currentList.length) return;
+  currentIndex=(currentIndex-1+currentList.length)%currentList.length;
   playCurrent();
 }
 
-function startTimer(){
+function showPlaylist(){ hideAll(); document.getElementById("playlistSection").style.display="block"; render(playlist,"playlistGrid"); currentList=playlist; }
 
-  stopTimer();
+function showRecently(){ hideAll(); document.getElementById("recentSection").style.display="block"; render(recent,"recentGrid"); currentList=recent; }
 
-  timer = setInterval(updateProgress, 500);
+function showSearch(){ hideAll(); document.getElementById("searchSection").style.display="block"; }
+
+function hideAll(){
+  document.getElementById("searchSection").style.display="none";
+  document.getElementById("recentSection").style.display="none";
+  document.getElementById("playlistSection").style.display="none";
 }
 
-function stopTimer(){
-
-  if(timer){
-    clearInterval(timer);
-    timer = null;
-  }
-
+function closeVideo(){
+  document.getElementById("videoDrawer").classList.add("hidden");
+  document.getElementById("openVideoBtn").classList.remove("hidden");
 }
 
-function updateProgress(){
-
-  if(!player || !isPlaying) return;
-
-  const current = player.getCurrentTime();
-  const total = player.getDuration();
-
-  if(!total) return;
-
-  const percent = (current / total) * 100;
-
-  const seek = document.getElementById("seek");
-
-  seek.value = percent;
-
-  document.getElementById("current").innerText =
-    format(current);
-
-  document.getElementById("duration").innerText =
-    format(total);
-
+function openVideo(){
+  document.getElementById("videoDrawer").classList.remove("hidden");
+  document.getElementById("openVideoBtn").classList.add("hidden");
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
-
-  const seek = document.getElementById("seek");
-
-  seek.addEventListener("input",()=>{
-
-    if(!player) return;
-
-    const total = player.getDuration();
-
-    const time = (seek.value / 100) * total;
-
-    player.seekTo(time,true);
-
+  document.getElementById("query").addEventListener("keydown",(e)=>{
+    if(e.key==="Enter") search();
   });
-
 });
-
-function format(sec){
-
-  sec = Math.floor(sec);
-
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-
-  return m + ":" + (s<10?"0":"") + s;
-}

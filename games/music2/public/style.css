@@ -1,6 +1,4 @@
 
-*{ box-sizing:border-box; }
-
 body{
   margin:0;
   background:#000;
@@ -10,13 +8,25 @@ body{
 
 .app{
   display:flex;
-  height:calc(100vh - 100px);
+  height:calc(100vh - 120px);
 }
 
 .sidebar{
   width:220px;
   background:#070707;
   padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.sidebar button{
+  background:#111;
+  border:none;
+  color:white;
+  padding:10px;
+  cursor:pointer;
+  text-align:left;
 }
 
 .main{
@@ -51,7 +61,7 @@ body{
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
   gap:20px;
 }
 
@@ -60,31 +70,56 @@ body{
   padding:10px;
   border-radius:8px;
   cursor:pointer;
-  transition:0.2s;
+  position:relative;
 }
 
-.card:hover{
-  background:#181818;
+.card img{ width:100%; border-radius:6px; }
+
+.card .title{ margin-top:6px; font-size:14px; font-weight:bold; }
+
+.card .artist{ font-size:12px; color:#aaa; }
+
+.add-btn,.remove-btn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:#1db954;
+  color:black;
+  border:none;
+  border-radius:50%;
+  width:26px;
+  height:26px;
+  cursor:pointer;
 }
 
-.card img{
-  width:100%;
-  border-radius:6px;
+.video-drawer{
+  position:fixed;
+  bottom:120px;
+  left:0;
+  right:0;
+  height:400px;
+  background:black;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transition:0.3s;
 }
 
-.card .title{
-  margin-top:8px;
-  font-size:14px;
-  font-weight:bold;
-}
+.hidden{ display:none; }
 
-.card .artist{
-  font-size:12px;
-  color:#aaa;
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:20px;
+  background:red;
+  border:none;
+  color:white;
+  padding:6px 10px;
+  cursor:pointer;
 }
 
 .player-bar{
-  height:100px;
+  height:120px;
   background:#111;
   display:flex;
   align-items:center;
@@ -93,27 +128,19 @@ body{
   border-top:1px solid #222;
 }
 
-.player-bar img{
-  width:60px;
-  height:60px;
-  object-fit:cover;
-  border-radius:4px;
+.drawer-btn{
+  background:#1db954;
+  border:none;
+  color:black;
+  padding:6px 10px;
+  cursor:pointer;
 }
 
-.info{
-  flex:1;
-}
+.player-bar img{ width:60px; height:60px; border-radius:4px; }
 
-.progress{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:12px;
-}
+.progress{ display:flex; align-items:center; gap:8px; font-size:12px; }
 
-.progress input{
-  flex:1;
-}
+.progress input{ flex:1; }
 
 .controls button{
   background:#1db954;
@@ -121,12 +148,5 @@ body{
   color:black;
   padding:10px 14px;
   border-radius:50%;
-  font-size:16px;
   cursor:pointer;
-}
-
-#ytplayer{
-  width:0;
-  height:0;
-  overflow:hidden;
 }

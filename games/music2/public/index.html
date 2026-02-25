@@ -12,25 +12,45 @@
 
   <div class="sidebar">
     <h1>🎵 Imp Music</h1>
-    <button>Search</button>
+    <button onclick="showSearch()">Search</button>
+    <button onclick="showRecently()">Recently Played</button>
+    <button onclick="showPlaylist()">My Playlist</button>
   </div>
 
   <div class="main">
 
-    <div class="search-bar">
-      <input id="query" placeholder="Search artist or song">
-      <button onclick="search()">Search</button>
+    <div id="searchSection">
+      <div class="search-bar">
+        <input id="query" placeholder="Search artist or song">
+        <button onclick="search()">Search</button>
+      </div>
+      <h2 id="resultsTitle"></h2>
+      <div id="grid" class="grid"></div>
     </div>
 
-    <h2 id="resultsTitle"></h2>
+    <div id="recentSection" style="display:none;">
+      <h2>Recently Played</h2>
+      <div id="recentGrid" class="grid"></div>
+    </div>
 
-    <div id="grid" class="grid"></div>
+    <div id="playlistSection" style="display:none;">
+      <h2>My Playlist</h2>
+      <div id="playlistGrid" class="grid"></div>
+    </div>
 
   </div>
-
 </div>
 
+<!-- Video Drawer -->
+<div id="videoDrawer" class="video-drawer hidden">
+  <button class="close-btn" onclick="closeVideo()">✖</button>
+  <div id="ytplayer"></div>
+</div>
+
+<!-- Player Bar -->
 <div class="player-bar">
+
+  <button id="openVideoBtn" class="drawer-btn hidden" onclick="openVideo()">^</button>
 
   <img id="cover" src="" />
 
@@ -47,16 +67,13 @@
 
   <div class="controls">
     <button onclick="prev()">⏮</button>
-    <button onclick="toggle()">⏯</button>
+    <button id="playBtn" onclick="toggle()">▶</button>
     <button onclick="next()">⏭</button>
   </div>
 
 </div>
 
-<div id="ytplayer"></div>
-
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="app.js"></script>
-
 </body>
 </html>

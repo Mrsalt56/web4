@@ -12,65 +12,39 @@
 
   <div class="sidebar">
     <h1>🎵 Imp Music</h1>
-    <button onclick="showSearch()">Search</button>
-    <button onclick="showRecently()">Recently Played</button>
-    <button onclick="showPlaylist()">My Playlist</button>
+    <button onclick="loadTrending()">Home</button>
   </div>
 
   <div class="main">
 
-    <div id="searchSection">
-      <div class="search-bar">
-        <input id="query" placeholder="Search artist or song">
-        <button onclick="search()">Search</button>
-      </div>
-      <h2 id="resultsTitle"></h2>
-      <div id="grid" class="grid"></div>
+    <div class="search-bar">
+      <input id="query" placeholder="Search artist or song">
+      <button onclick="search()">Search</button>
     </div>
 
-    <div id="recentSection" style="display:none;">
-      <h2>Recently Played</h2>
-      <div id="recentGrid" class="grid"></div>
-    </div>
-
-    <div id="playlistSection" style="display:none;">
-      <h2>My Playlist</h2>
-      <div id="playlistGrid" class="grid"></div>
-    </div>
+    <h2 id="sectionTitle">Trending Music (US)</h2>
+    <div id="grid" class="grid"></div>
 
   </div>
 </div>
 
-<!-- Video Drawer -->
 <div id="videoDrawer" class="video-drawer hidden">
   <button class="close-btn" onclick="closeVideo()">✖</button>
   <div id="ytplayer"></div>
 </div>
 
-<!-- Player Bar -->
 <div class="player-bar">
-
   <button id="openVideoBtn" class="drawer-btn hidden" onclick="openVideo()">^</button>
-
   <img id="cover" src="" />
-
   <div class="info">
     <div id="song">Not Playing</div>
     <div id="artist"></div>
-
-    <div class="progress">
-      <span id="current">0:00</span>
-      <input type="range" id="seek" value="0">
-      <span id="duration">0:00</span>
-    </div>
   </div>
-
   <div class="controls">
     <button onclick="prev()">⏮</button>
     <button id="playBtn" onclick="toggle()">▶</button>
     <button onclick="next()">⏭</button>
   </div>
-
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>

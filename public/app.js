@@ -4,6 +4,15 @@ let currentList = [];
 let currentIndex = 0;
 let isPlaying = false;
 
+let playlist = JSON.parse(localStorage.getItem("playlist") || "[]");
+let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+let searchResults = [];
+
+function saveData(){
+  localStorage.setItem("playlist", JSON.stringify(playlist));
+  localStorage.setItem("recent", JSON.stringify(recent));
+}
+
 function onYouTubeIframeAPIReady(){
   player = new YT.Player("ytplayer",{
     height:"360",
@@ -27,7 +36,7 @@ async function loadTrending(){
   const res=await fetch("/api/trending");
   const data=await res.json();
   currentList=data;
-  render(data);
+  render(data,true);
 }
 
 async function search(){
@@ -35,24 +44,65 @@ async function search(){
   if(!q) return;
   document.getElementById("sectionTitle").innerText=`Results for "${q}"`;
   const res=await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-  const data=await res.json();
-  currentList=data;
-  render(data);
+  searchResults=await res.json();
+  currentList=searchResults;
+  render(searchResults,true);
 }
 
-function render(list){
+function render(list,allowAdd=false){
   const grid=document.getElementById("grid");
   grid.innerHTML="";
   list.forEach((track,i)=>{
     const div=document.createElement("div");
     div.className="card";
-    div.innerHTML=`
+
+    let btn="";
+    if(allowAdd && currentList===searchResults){
+      btn=`<button class="add-btn" onclick="addToPlaylist(${i})">+</button>`;
+    }
+    if(currentList===playlist){
+      btn=`<button class="remove-btn" onclick="removeFromPlaylist(${i})">-</button>`;
+    }
+
+    div.innerHTML=`${btn}
       <img src="${track.thumb}">
       <div class="title">${track.title}</div>
       <div class="artist">${track.channel}</div>`;
-    div.onclick=()=>{ currentIndex=i; playCurrent(); };
+
+    div.onclick=(e)=>{
+      if(e.target.classList.contains("add-btn")||e.target.classList.contains("remove-btn")) return;
+      currentIndex=i;
+      playCurrent();
+    };
+
     grid.appendChild(div);
   });
+}
+
+function addToPlaylist(i){
+  const t=searchResults[i];
+  if(!playlist.find(x=>x.id===t.id)){
+    playlist.push(t);
+    saveData();
+  }
+}
+
+function removeFromPlaylist(i){
+  playlist.splice(i,1);
+  saveData();
+  render(playlist);
+}
+
+function showPlaylist(){
+  document.getElementById("sectionTitle").innerText="My Playlist";
+  currentList=playlist;
+  render(playlist);
+}
+
+function showRecent(){
+  document.getElementById("sectionTitle").innerText="Recently Played";
+  currentList=recent;
+  render(recent);
 }
 
 function playCurrent(){
@@ -64,6 +114,12 @@ function playCurrent(){
   document.getElementById("artist").innerText=t.channel;
   document.getElementById("videoDrawer").classList.remove("hidden");
   document.getElementById("openVideoBtn").classList.add("hidden");
+
+  if(!recent.find(x=>x.id===t.id)){
+    recent.unshift(t);
+    if(recent.length>20) recent.pop();
+    saveData();
+  }
 }
 
 function toggle(){ isPlaying?player.pauseVideo():player.playVideo(); }

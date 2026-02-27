@@ -436,55 +436,138 @@ document.addEventListener("click", function (e) {
 });
 
 // ==========================
-// APPEARANCE CONTROLS
+// ADVANCED APPEARANCE SYSTEM
 // ==========================
+
+const floatingBG = document.querySelector(".floating-bg");
 
 const bgPicker = document.getElementById("bgColorPicker");
 const bubblePicker = document.getElementById("bubbleColorPicker");
+const bubbleCount = document.getElementById("bubbleCount");
+const bubbleSize = document.getElementById("bubbleSize");
 const bubbleSpeed = document.getElementById("bubbleSpeed");
 const bubbleShape = document.getElementById("bubbleShape");
-const bubbles = document.querySelectorAll(".floating-bg span");
 
-// Background Color
-if (bgPicker) {
-  bgPicker.addEventListener("input", () => {
-    document.body.style.background = bgPicker.value;
-  });
+// Create bubbles dynamically
+function generateBubbles(count) {
+
+  floatingBG.innerHTML = "";
+
+  for (let i = 0; i < count; i++) {
+
+    const bubble = document.createElement("span");
+
+    bubble.style.left = Math.random() * 100 + "%";
+
+    applyBubbleStyle(bubble);
+
+    floatingBG.appendChild(bubble);
+  }
 }
 
-// Bubble Color
-if (bubblePicker) {
-  bubblePicker.addEventListener("input", () => {
-    bubbles.forEach(b => {
-      b.style.background = bubblePicker.value + "33"; // slight transparency
-    });
-  });
+// Apply shape + size + speed + color
+function applyBubbleStyle(bubble) {
+
+  const size = bubbleSize.value + "px";
+  bubble.style.width = size;
+  bubble.style.height = size;
+
+  bubble.style.animationDuration = bubbleSpeed.value + "s";
+  bubble.style.background = bubblePicker.value + "33";
+
+  const shape = bubbleShape.value;
+
+  bubble.style.clipPath = "";
+  bubble.style.transform = "";
+
+  switch (shape) {
+
+    case "circle":
+      bubble.style.borderRadius = "50%";
+      break;
+
+    case "square":
+      bubble.style.borderRadius = "0%";
+      break;
+
+    case "rounded":
+      bubble.style.borderRadius = "20%";
+      break;
+
+    case "triangle":
+      bubble.style.width = "0";
+      bubble.style.height = "0";
+      bubble.style.borderLeft = size + " solid transparent";
+      bubble.style.borderRight = size + " solid transparent";
+      bubble.style.borderBottom = size + " solid " + bubblePicker.value + "66";
+      bubble.style.background = "transparent";
+      break;
+
+    case "diamond":
+      bubble.style.borderRadius = "0";
+      bubble.style.transform = "rotate(45deg)";
+      break;
+
+    case "random":
+      const shapes = ["circle","square","rounded","diamond"];
+      const randomShape = shapes[Math.floor(Math.random()*shapes.length)];
+      bubble.style.borderRadius = randomShape === "circle" ? "50%" :
+                                  randomShape === "rounded" ? "20%" : "0%";
+      break;
+  }
 }
 
-// Bubble Speed
-if (bubbleSpeed) {
-  bubbleSpeed.addEventListener("change", () => {
-    let duration;
+// Update everything
+function updateAppearance() {
 
-    if (bubbleSpeed.value === "slow") duration = "25s";
-    if (bubbleSpeed.value === "medium") duration = "15s";
-    if (bubbleSpeed.value === "fast") duration = "7s";
+  document.body.style.background = bgPicker.value;
 
-    bubbles.forEach(b => {
-      b.style.animationDuration = duration;
-    });
-  });
+  generateBubbles(bubbleCount.value);
+
+  saveAppearance();
 }
 
-// Bubble Shape
-if (bubbleShape) {
-  bubbleShape.addEventListener("change", () => {
-    bubbles.forEach(b => {
-      if (bubbleShape.value === "circle") {
-        b.style.borderRadius = "50%";
-      } else {
-        b.style.borderRadius = "0%";
-      }
-    });
-  });
+// Save to localStorage
+function saveAppearance() {
+
+  const settings = {
+    bg: bgPicker.value,
+    bubble: bubblePicker.value,
+    count: bubbleCount.value,
+    size: bubbleSize.value,
+    speed: bubbleSpeed.value,
+    shape: bubbleShape.value
+  };
+
+  localStorage.setItem("appearanceSettings", JSON.stringify(settings));
 }
+
+// Load from localStorage
+function loadAppearance() {
+
+  const saved = localStorage.getItem("appearanceSettings");
+
+  if (!saved) return;
+
+  const settings = JSON.parse(saved);
+
+  bgPicker.value = settings.bg;
+  bubblePicker.value = settings.bubble;
+  bubbleCount.value = settings.count;
+  bubbleSize.value = settings.size;
+  bubbleSpeed.value = settings.speed;
+  bubbleShape.value = settings.shape;
+
+  document.body.style.background = settings.bg;
+}
+
+// Event listeners
+[bgPicker, bubblePicker, bubbleCount, bubbleSize, bubbleSpeed, bubbleShape]
+.forEach(el => {
+  el.addEventListener("input", updateAppearance);
+  el.addEventListener("change", updateAppearance);
+});
+
+// Init
+loadAppearance();
+generateBubbles(bubbleCount.value);

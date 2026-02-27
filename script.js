@@ -434,3 +434,57 @@ document.addEventListener("click", function (e) {
   }
 
 });
+
+// ==========================
+// APPEARANCE CONTROLS
+// ==========================
+
+const bgPicker = document.getElementById("bgColorPicker");
+const bubblePicker = document.getElementById("bubbleColorPicker");
+const bubbleSpeed = document.getElementById("bubbleSpeed");
+const bubbleShape = document.getElementById("bubbleShape");
+const bubbles = document.querySelectorAll(".floating-bg span");
+
+// Background Color
+if (bgPicker) {
+  bgPicker.addEventListener("input", () => {
+    document.body.style.background = bgPicker.value;
+  });
+}
+
+// Bubble Color
+if (bubblePicker) {
+  bubblePicker.addEventListener("input", () => {
+    bubbles.forEach(b => {
+      b.style.background = bubblePicker.value + "33"; // slight transparency
+    });
+  });
+}
+
+// Bubble Speed
+if (bubbleSpeed) {
+  bubbleSpeed.addEventListener("change", () => {
+    let duration;
+
+    if (bubbleSpeed.value === "slow") duration = "25s";
+    if (bubbleSpeed.value === "medium") duration = "15s";
+    if (bubbleSpeed.value === "fast") duration = "7s";
+
+    bubbles.forEach(b => {
+      b.style.animationDuration = duration;
+    });
+  });
+}
+
+// Bubble Shape
+if (bubbleShape) {
+  bubbleShape.addEventListener("change", () => {
+    bubbles.forEach(b => {
+      if (bubbleShape.value === "circle") {
+        b.style.borderRadius = "50%";
+      } else {
+        b.style.borderRadius = "0%";
+      }
+    });
+  });
+}

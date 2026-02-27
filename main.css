@@ -437,19 +437,14 @@ body {
 
 /* Appearance Controls */
 
-.activity-body label {
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 5px;
-  font-weight: 600;
-  color: #4da6ff;
+.activity-body input[type="range"] {
+  width: 100%;
+  margin-bottom: 15px;
 }
 
-.activity-body select,
-.activity-body input[type="color"] {
-  width: 100%;
-  padding: 6px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: none;
+.floating-bg span {
+  position: absolute;
+  bottom: -150px;
+  background: rgba(0,120,255,0.2);
+  animation: float linear infinite;
 }

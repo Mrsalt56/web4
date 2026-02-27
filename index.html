@@ -507,8 +507,7 @@
       <div class="activity-body">
 
         <div id="sessionTimer">00:00:00</div>
-
-      </div>
+</div>
 
 <!-- APPEARANCE SETTINGS -->
 <div class="activity-drop" data-open="false">
@@ -526,17 +525,23 @@
     <label>Bubble Color</label>
     <input type="color" id="bubbleColorPicker" value="#0078ff">
 
+    <label>Bubble Count</label>
+    <input type="range" id="bubbleCount" min="5" max="40" value="8">
+
+    <label>Bubble Size</label>
+    <input type="range" id="bubbleSize" min="20" max="100" value="40">
+
     <label>Bubble Speed</label>
-    <select id="bubbleSpeed">
-      <option value="slow">Slow</option>
-      <option value="medium" selected>Medium</option>
-      <option value="fast">Fast</option>
-    </select>
+    <input type="range" id="bubbleSpeed" min="5" max="30" value="15">
 
     <label>Bubble Shape</label>
     <select id="bubbleShape">
-      <option value="circle" selected>Circle</option>
+      <option value="circle">Circle</option>
       <option value="square">Square</option>
+      <option value="rounded">Rounded</option>
+      <option value="triangle">Triangle</option>
+      <option value="diamond">Diamond</option>
+      <option value="random">Random</option>
     </select>
 
   </div>

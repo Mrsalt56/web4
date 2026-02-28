@@ -457,32 +457,54 @@ function updateSliderLabels() {
   speedValue.textContent = bubbleSpeed.value;
 }
 
-// Generate non-overlapping positions
 function generateBubbles(count) {
 
   floatingBG.innerHTML = "";
 
-  const positions = [];
-  const minDistance = bubbleSize.value * 1.5;
+  const placed = [];
+  const size = parseInt(bubbleSize.value);
+  const minDistance = size * 1.3;
+
+  const maxWidth = window.innerWidth;
+  const maxHeight = window.innerHeight;
 
   for (let i = 0; i < count; i++) {
 
-    let left;
-    let tries = 0;
+    let bubble;
+    let x, y;
+    let attempts = 0;
+    let overlapping;
 
     do {
-      left = Math.random() * 100;
-      tries++;
-    } 
-    while (
-      positions.some(pos => Math.abs(pos - left) < (minDistance / window.innerWidth) * 100)
-      && tries < 50
-    );
 
-    positions.push(left);
+      overlapping = false;
 
-    const bubble = document.createElement("span");
-    bubble.style.left = left + "%";
+      x = Math.random() * (maxWidth - size);
+      y = Math.random() * (maxHeight - size);
+
+      for (let p of placed) {
+
+        const dx = p.x - x;
+        const dy = p.y - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < minDistance) {
+          overlapping = true;
+          break;
+        }
+      }
+
+      attempts++;
+
+    } while (overlapping && attempts < 100);
+
+    placed.push({ x, y });
+
+    bubble = document.createElement("span");
+
+    bubble.style.position = "absolute";
+    bubble.style.left = x + "px";
+    bubble.style.top = y + "px";
 
     applyBubbleStyle(bubble);
 
@@ -497,6 +519,9 @@ function applyBubbleStyle(bubble) {
 
   bubble.style.width = size;
   bubble.style.height = size;
+  bubble.style.borderLeft = "";
+  bubble.style.borderRight = "";
+  bubble.style.borderBottom = "";
   bubble.style.animationDuration = bubbleSpeed.value + "s";
   bubble.style.background = bubblePicker.value + "33";
   bubble.style.border = "none";
@@ -526,7 +551,7 @@ function applyBubbleStyle(bubble) {
       bubble.style.borderBottom = size + " solid " + bubblePicker.value + "66";
       bubble.style.background = "transparent";
       break;
-
+      
     case "diamond":
       bubble.style.borderRadius = "0";
       bubble.style.transform = "rotate(45deg)";

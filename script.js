@@ -436,7 +436,7 @@ document.addEventListener("click", function (e) {
 });
 
 // ==========================
-// ADVANCED APPEARANCE SYSTEM
+// IMPROVED APPEARANCE SYSTEM
 // ==========================
 
 const floatingBG = document.querySelector(".floating-bg");
@@ -448,16 +448,41 @@ const bubbleSize = document.getElementById("bubbleSize");
 const bubbleSpeed = document.getElementById("bubbleSpeed");
 const bubbleShape = document.getElementById("bubbleShape");
 
-// Create bubbles dynamically
+const countValue = document.getElementById("countValue");
+const speedValue = document.getElementById("speedValue");
+
+// Show slider numbers
+function updateSliderLabels() {
+  countValue.textContent = bubbleCount.value;
+  speedValue.textContent = bubbleSpeed.value;
+}
+
+// Generate non-overlapping positions
 function generateBubbles(count) {
 
   floatingBG.innerHTML = "";
 
+  const positions = [];
+  const minDistance = bubbleSize.value * 1.5;
+
   for (let i = 0; i < count; i++) {
 
-    const bubble = document.createElement("span");
+    let left;
+    let tries = 0;
 
-    bubble.style.left = Math.random() * 100 + "%";
+    do {
+      left = Math.random() * 100;
+      tries++;
+    } 
+    while (
+      positions.some(pos => Math.abs(pos - left) < (minDistance / window.innerWidth) * 100)
+      && tries < 50
+    );
+
+    positions.push(left);
+
+    const bubble = document.createElement("span");
+    bubble.style.left = left + "%";
 
     applyBubbleStyle(bubble);
 
@@ -469,16 +494,15 @@ function generateBubbles(count) {
 function applyBubbleStyle(bubble) {
 
   const size = bubbleSize.value + "px";
+
   bubble.style.width = size;
   bubble.style.height = size;
-
   bubble.style.animationDuration = bubbleSpeed.value + "s";
   bubble.style.background = bubblePicker.value + "33";
+  bubble.style.border = "none";
+  bubble.style.transform = "none";
 
   const shape = bubbleShape.value;
-
-  bubble.style.clipPath = "";
-  bubble.style.transform = "";
 
   switch (shape) {
 
@@ -511,8 +535,9 @@ function applyBubbleStyle(bubble) {
     case "random":
       const shapes = ["circle","square","rounded","diamond"];
       const randomShape = shapes[Math.floor(Math.random()*shapes.length)];
-      bubble.style.borderRadius = randomShape === "circle" ? "50%" :
-                                  randomShape === "rounded" ? "20%" : "0%";
+      bubble.style.borderRadius =
+        randomShape === "circle" ? "50%" :
+        randomShape === "rounded" ? "20%" : "0%";
       break;
   }
 }
@@ -520,14 +545,16 @@ function applyBubbleStyle(bubble) {
 // Update everything
 function updateAppearance() {
 
+  updateSliderLabels();
+
   document.body.style.background = bgPicker.value;
 
-  generateBubbles(bubbleCount.value);
+  generateBubbles(parseInt(bubbleCount.value));
 
   saveAppearance();
 }
 
-// Save to localStorage
+// Save
 function saveAppearance() {
 
   const settings = {
@@ -542,11 +569,10 @@ function saveAppearance() {
   localStorage.setItem("appearanceSettings", JSON.stringify(settings));
 }
 
-// Load from localStorage
+// Load
 function loadAppearance() {
 
   const saved = localStorage.getItem("appearanceSettings");
-
   if (!saved) return;
 
   const settings = JSON.parse(saved);
@@ -568,6 +594,10 @@ function loadAppearance() {
   el.addEventListener("change", updateAppearance);
 });
 
+// Init
+loadAppearance();
+updateSliderLabels();
+generateBubbles(parseInt(bubbleCount.value));
 // Init
 loadAppearance();
 generateBubbles(bubbleCount.value);

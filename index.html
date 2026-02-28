@@ -495,7 +495,6 @@
       </div>
     </div>
 
-
     <!-- TIMER DROPDOWN -->
     <div class="activity-drop" data-open="false">
 
@@ -507,9 +506,47 @@
       <div class="activity-body">
 
         <div id="sessionTimer">00:00:00</div>
-
-      </div>
+        
+       </div>
     </div>
+
+<!-- APPEARANCE SETTINGS -->
+<div class="activity-drop" data-open="false">
+
+  <button class="activity-head">
+    🎨 Appearance
+    <span class="arrow">▼</span>
+  </button>
+
+  <div class="activity-body">
+
+    <label>Background Color</label>
+    <input type="color" id="bgColorPicker" value="#000000">
+
+    <label>Bubble Color</label>
+    <input type="color" id="bubbleColorPicker" value="#0078ff">
+
+    <label>Bubble Count: <span id="countValue">8</span></label>
+    <input type="range" id="bubbleCount" min="5" max="40" value="8">
+
+    <label>Bubble Size</label>
+    <input type="range" id="bubbleSize" min="20" max="100" value="40">
+
+    <label>Bubble Speed: <span id="speedValue">15</span>s</label>
+    <input type="range" id="bubbleSpeed" min="5" max="30" value="15">
+
+    <label>Bubble Shape</label>
+    <select id="bubbleShape">
+      <option value="circle">Circle</option>
+      <option value="square">Square</option>
+      <option value="rounded">Rounded</option>
+      <option value="triangle">Triangle</option>
+      <option value="diamond">Diamond</option>
+      <option value="random">Random</option>
+    </select>
+
+  </div>
+</div>
 
 <!-- QUICK ACTIONS -->
 <div class="activity-drop" data-open="false">

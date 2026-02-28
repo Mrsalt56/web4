@@ -434,3 +434,17 @@ body {
   font-size: 22px;
   cursor: pointer;
 }
+
+/* Appearance Controls */
+
+.activity-body input[type="range"] {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.floating-bg span {
+  position: absolute;
+  bottom: -150px;
+  background: rgba(0,120,255,0.2);
+  animation: float linear infinite;
+}

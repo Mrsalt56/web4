@@ -434,3 +434,195 @@ document.addEventListener("click", function (e) {
   }
 
 });
+
+// ==========================
+// IMPROVED APPEARANCE SYSTEM
+// ==========================
+
+const floatingBG = document.querySelector(".floating-bg");
+
+const bgPicker = document.getElementById("bgColorPicker");
+const bubblePicker = document.getElementById("bubbleColorPicker");
+const bubbleCount = document.getElementById("bubbleCount");
+const bubbleSize = document.getElementById("bubbleSize");
+const bubbleSpeed = document.getElementById("bubbleSpeed");
+const bubbleShape = document.getElementById("bubbleShape");
+
+const countValue = document.getElementById("countValue");
+const speedValue = document.getElementById("speedValue");
+
+// Show slider numbers
+function updateSliderLabels() {
+  countValue.textContent = bubbleCount.value;
+  speedValue.textContent = bubbleSpeed.value;
+}
+
+function generateBubbles(count) {
+
+  floatingBG.innerHTML = "";
+
+  const placed = [];
+  const size = parseInt(bubbleSize.value);
+  const minDistance = size * 1.3;
+
+  const maxWidth = window.innerWidth;
+  const maxHeight = window.innerHeight;
+
+  for (let i = 0; i < count; i++) {
+
+    let bubble;
+    let x, y;
+    let attempts = 0;
+    let overlapping;
+
+    do {
+
+      overlapping = false;
+
+      x = Math.random() * (maxWidth - size);
+      y = Math.random() * (maxHeight - size);
+
+      for (let p of placed) {
+
+        const dx = p.x - x;
+        const dy = p.y - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < minDistance) {
+          overlapping = true;
+          break;
+        }
+      }
+
+      attempts++;
+
+    } while (overlapping && attempts < 100);
+
+    placed.push({ x, y });
+
+    bubble = document.createElement("span");
+
+    bubble.style.position = "absolute";
+    bubble.style.left = x + "px";
+    bubble.style.top = y + "px";
+
+    applyBubbleStyle(bubble);
+
+    floatingBG.appendChild(bubble);
+  }
+}
+
+// Apply shape + size + speed + color
+function applyBubbleStyle(bubble) {
+
+  const size = bubbleSize.value + "px";
+
+  bubble.style.width = size;
+  bubble.style.height = size;
+  bubble.style.borderLeft = "";
+  bubble.style.borderRight = "";
+  bubble.style.borderBottom = "";
+  bubble.style.animationDuration = bubbleSpeed.value + "s";
+  bubble.style.background = bubblePicker.value + "33";
+  bubble.style.border = "none";
+  bubble.style.transform = "none";
+
+  const shape = bubbleShape.value;
+
+  switch (shape) {
+
+    case "circle":
+      bubble.style.borderRadius = "50%";
+      break;
+
+    case "square":
+      bubble.style.borderRadius = "0%";
+      break;
+
+    case "rounded":
+      bubble.style.borderRadius = "20%";
+      break;
+
+    case "triangle":
+      bubble.style.width = "0";
+      bubble.style.height = "0";
+      bubble.style.borderLeft = size + " solid transparent";
+      bubble.style.borderRight = size + " solid transparent";
+      bubble.style.borderBottom = size + " solid " + bubblePicker.value + "66";
+      bubble.style.background = "transparent";
+      break;
+      
+    case "diamond":
+      bubble.style.borderRadius = "0";
+      bubble.style.transform = "rotate(45deg)";
+      break;
+
+    case "random":
+      const shapes = ["circle","square","rounded","diamond"];
+      const randomShape = shapes[Math.floor(Math.random()*shapes.length)];
+      bubble.style.borderRadius =
+        randomShape === "circle" ? "50%" :
+        randomShape === "rounded" ? "20%" : "0%";
+      break;
+  }
+}
+
+// Update everything
+function updateAppearance() {
+
+  updateSliderLabels();
+
+  document.body.style.background = bgPicker.value;
+
+  generateBubbles(parseInt(bubbleCount.value));
+
+  saveAppearance();
+}
+
+// Save
+function saveAppearance() {
+
+  const settings = {
+    bg: bgPicker.value,
+    bubble: bubblePicker.value,
+    count: bubbleCount.value,
+    size: bubbleSize.value,
+    speed: bubbleSpeed.value,
+    shape: bubbleShape.value
+  };
+
+  localStorage.setItem("appearanceSettings", JSON.stringify(settings));
+}
+
+// Load
+function loadAppearance() {
+
+  const saved = localStorage.getItem("appearanceSettings");
+  if (!saved) return;
+
+  const settings = JSON.parse(saved);
+
+  bgPicker.value = settings.bg;
+  bubblePicker.value = settings.bubble;
+  bubbleCount.value = settings.count;
+  bubbleSize.value = settings.size;
+  bubbleSpeed.value = settings.speed;
+  bubbleShape.value = settings.shape;
+
+  document.body.style.background = settings.bg;
+}
+
+// Event listeners
+[bgPicker, bubblePicker, bubbleCount, bubbleSize, bubbleSpeed, bubbleShape]
+.forEach(el => {
+  el.addEventListener("input", updateAppearance);
+  el.addEventListener("change", updateAppearance);
+});
+
+// Init
+loadAppearance();
+updateSliderLabels();
+generateBubbles(parseInt(bubbleCount.value));
+// Init
+loadAppearance();
+generateBubbles(bubbleCount.value);

@@ -1,6 +1,5 @@
-
-import express from "express";
-import fetch from "node-fetch";
+const express = require("express");
+const fetch = require("node-fetch");
 
 const app = express();
 const SC_CLIENT_ID = process.env.SC_CLIENT_ID;
@@ -14,13 +13,10 @@ app.get("/api/search", async (req, res) => {
     const url =
       `https://api-v2.soundcloud.com/search/tracks` +
       `?q=${encodeURIComponent(q)}` +
-      `&client_id=${process.env.SC_CLIENT_ID}` +
+      `&client_id=${SC_CLIENT_ID}` +
       `&limit=20`;
 
-    const r = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0" }
-    });
-
+    const r = await fetch(url);
     const data = await r.json();
 
     if (!data.collection) return res.json([]);
@@ -28,11 +24,11 @@ app.get("/api/search", async (req, res) => {
     const results = data.collection
       .filter(t => t.media && t.media.transcodings)
       .map(t => {
-        const hls = t.media.transcodings.find(
-          tr => tr.format.protocol === "hls"
+        const progressive = t.media.transcodings.find(
+          tr => tr.format.protocol === "progressive"
         );
 
-        if (!hls) return null;
+        if (!progressive) return null;
 
         return {
           id: t.id,
@@ -41,7 +37,7 @@ app.get("/api/search", async (req, res) => {
           artwork: t.artwork_url
             ? t.artwork_url.replace("-large", "-t500x500")
             : "",
-          stream_url: hls.url
+          stream_url: progressive.url
         };
       })
       .filter(Boolean);
@@ -49,25 +45,31 @@ app.get("/api/search", async (req, res) => {
     res.json(results);
 
   } catch (err) {
-    console.error(err);
+    console.error("Search error:", err);
     res.status(500).json([]);
   }
 });
 
 app.get("/api/stream", async (req, res) => {
   try {
-    const hlsUrl = `${req.query.url}&client_id=${process.env.SC_CLIENT_ID}`;
+    const streamUrl = `${req.query.url}?client_id=${SC_CLIENT_ID}`;
 
-    const r = await fetch(hlsUrl);
+    const r = await fetch(streamUrl);
     const data = await r.json();
 
-    res.json({ url: data.url });
+    const audioRes = await fetch(data.url);
+
+    res.setHeader("Content-Type", "audio/mpeg");
+    audioRes.body.pipe(res);
 
   } catch (err) {
-    console.error("HLS stream error:", err);
-    res.status(500).json({});
+    console.error("Stream error:", err);
+    res.status(500).end();
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Running on", PORT));
+
+app.listen(PORT, () => {
+  console.log("Running on port", PORT);
+});

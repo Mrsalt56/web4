@@ -27,13 +27,29 @@ function render(list) {
   });
 }
 
-function play() {
+async function play() {
   const t = currentList[currentIndex];
+
   document.getElementById("title").innerText = t.title;
   document.getElementById("artist").innerText = t.artist;
   document.getElementById("cover").src = t.artwork;
-  audio.src = `/api/stream?url=${encodeURIComponent(t.stream_url)}`;
-  audio.play();
+
+  const response = await fetch(`/api/stream?url=${encodeURIComponent(t.stream_url)}`);
+  const data = await response.json();
+
+  const audio = document.getElementById("audio");
+
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(data.url);
+    hls.attachMedia(audio);
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+      audio.play();
+    });
+  } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+    audio.src = data.url;
+    audio.play();
+  }
 }
 
 function toggle() {

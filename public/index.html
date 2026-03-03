@@ -3,53 +3,40 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Imp Music</title>
+<title>Imp Music - SoundCloud</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app">
-
-  <div class="sidebar">
-    <h1>Salty-tube</h1>
-    <button onclick="loadTrending()">Home</button>
-    <button onclick="showPlaylist()">My Playlist</button>
-    <button onclick="showRecent()">Recently Played</button>
-  </div>
-
-  <div class="main">
-
-    <div class="search-bar">
-      <input id="query" placeholder="Search artist or song">
-      <button onclick="search()">Search</button>
-    </div>
-
-    <h2 id="sectionTitle">Trending Music (US)</h2>
-    <div id="grid" class="grid"></div>
-
-  </div>
+<div class="sidebar">
+  <h1>🎵 Imp Music</h1>
 </div>
 
-<div id="videoDrawer" class="video-drawer hidden">
-  <button class="close-btn" onclick="closeVideo()">✖</button>
-  <div id="ytplayer"></div>
+<div class="main">
+  <div class="search-bar">
+    <input id="query" placeholder="Search tracks">
+    <button onclick="search()">Search</button>
+  </div>
+  <h2 id="sectionTitle">Search Results</h2>
+  <div id="grid" class="grid"></div>
 </div>
 
-<div class="player-bar">
-  <button id="openVideoBtn" class="drawer-btn hidden" onclick="openVideo()">^</button>
-  <img id="cover" src="" />
+<div class="player">
+  <img id="cover">
   <div class="info">
-    <div id="song">Not Playing</div>
+    <div id="title">Not Playing</div>
     <div id="artist"></div>
+    <input type="range" id="progress" value="0">
   </div>
   <div class="controls">
     <button onclick="prev()">⏮</button>
-    <button id="playBtn" onclick="toggle()">▶</button>
+    <button onclick="toggle()">▶</button>
     <button onclick="next()">⏭</button>
   </div>
 </div>
 
-<script src="https://www.youtube.com/iframe_api"></script>
+<audio id="audio"></audio>
+
 <script src="app.js"></script>
 </body>
 </html>

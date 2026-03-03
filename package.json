@@ -1,6 +1,6 @@
 {
-  "name": "music-system-youtube-full",
-  "version": "2.0.0",
+  "name": "music-system-soundcloud-direct",
+  "version": "3.0.0",
   "type": "module",
   "main": "server.js",
   "scripts": {

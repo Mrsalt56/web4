@@ -1,5 +1,5 @@
-const express = require("express");
-const fetch = require("node-fetch");
+import express from "express";
+import fetch from "node-fetch";
 
 const app = express();
 
@@ -21,7 +21,7 @@ app.get("/api/search", async (req, res) => {
 
   try {
 
-    /* ---------------- SOUND CLOUD ---------------- */
+    /* ---------- SOUND CLOUD ---------- */
 
     try {
 
@@ -56,12 +56,11 @@ app.get("/api/search", async (req, res) => {
 
       }
 
-    } catch (err) {
+    } catch {
       console.log("SoundCloud failed");
     }
 
-
-    /* ---------------- JAMENDO ---------------- */
+    /* ---------- JAMENDO ---------- */
 
     try {
 
@@ -87,12 +86,11 @@ app.get("/api/search", async (req, res) => {
 
       }
 
-    } catch (err) {
+    } catch {
       console.log("Jamendo failed");
     }
 
-
-    /* ---------------- INTERNET ARCHIVE ---------------- */
+    /* ---------- INTERNET ARCHIVE ---------- */
 
     try {
 
@@ -120,17 +118,15 @@ app.get("/api/search", async (req, res) => {
 
       }
 
-    } catch (err) {
+    } catch {
       console.log("Archive failed");
     }
-
 
     res.json(results);
 
   } catch (err) {
 
     console.error("Search error:", err);
-
     res.status(500).json([]);
 
   }
@@ -138,7 +134,7 @@ app.get("/api/search", async (req, res) => {
 });
 
 
-/* STREAM HLS FROM SOUNDCLOUD */
+/* STREAM SOUNDCLOUD HLS */
 
 app.get("/api/stream", async (req, res) => {
 
@@ -151,7 +147,6 @@ app.get("/api/stream", async (req, res) => {
     }
 
     const stream = await fetch(`${url}&client_id=${SC_CLIENT_ID}`);
-
     const data = await stream.json();
 
     res.json({ url: data.url });
@@ -159,7 +154,6 @@ app.get("/api/stream", async (req, res) => {
   } catch (err) {
 
     console.error("Stream error:", err);
-
     res.status(500).json({});
 
   }

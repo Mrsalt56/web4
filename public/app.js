@@ -1,77 +1,117 @@
 
-let currentList = [];
-let currentIndex = 0;
-const audio = document.getElementById("audio");
+const audio=document.getElementById("audio")
+const results=document.getElementById("results")
 
-async function search() {
-  const q = document.getElementById("query").value;
-  if (!q) return;
-  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-  const data = await res.json();
-  currentList = data;
-  render(data);
+let songs=[]
+let index=0
+let page=0
+let query=""
+
+function saveRecent(song){
+let r=JSON.parse(localStorage.getItem("recent")||"[]")
+r.unshift(song)
+localStorage.setItem("recent",JSON.stringify(r.slice(0,30)))
 }
 
-function render(list) {
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
-  list.forEach((t,i) => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <img src="${t.artwork}">
-      <div>${t.title}</div>
-      <div style="color:#aaa">${t.artist}</div>`;
-    div.onclick = () => { currentIndex=i; play(); };
-    grid.appendChild(div);
-  });
+function savePlaylist(song){
+let p=JSON.parse(localStorage.getItem("playlist")||"[]")
+p.push(song)
+localStorage.setItem("playlist",JSON.stringify(p))
 }
 
-async function play() {
-  const t = currentList[currentIndex];
+function render(list){
 
-  document.getElementById("title").innerText = t.title;
-  document.getElementById("artist").innerText = t.artist;
-  document.getElementById("cover").src = t.artwork;
+results.innerHTML=""
 
-  const response = await fetch(`/api/stream?url=${encodeURIComponent(t.stream_url)}`);
-  const data = await response.json();
+list.forEach(song=>{
 
-  const audio = document.getElementById("audio");
+const div=document.createElement("div")
+div.className="card"
 
-  if (Hls.isSupported()) {
-    const hls = new Hls();
-    hls.loadSource(data.url);
-    hls.attachMedia(audio);
-    hls.on(Hls.Events.MANIFEST_PARSED, function () {
-      audio.play();
-    });
-  } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-    audio.src = data.url;
-    audio.play();
-  }
+div.innerHTML=`<img src="${song.cover}">`
+
+div.onclick=()=>play(song)
+
+results.appendChild(div)
+
+})
+
 }
 
-function toggle() {
-  audio.paused ? audio.play() : audio.pause();
+async function search(){
+
+query=document.getElementById("search").value
+page=0
+
+const res=await fetch(`/api/search?q=${encodeURIComponent(query)}`)
+const data=await res.json()
+
+songs=data
+render(songs)
+
 }
 
-function next() {
-  if (!currentList.length) return;
-  currentIndex = (currentIndex+1)%currentList.length;
-  play();
+async function showTrending(){
+
+const res=await fetch("/api/trending")
+songs=await res.json()
+render(songs)
+
 }
 
-function prev() {
-  if (!currentList.length) return;
-  currentIndex = (currentIndex-1+currentList.length)%currentList.length;
-  play();
+function showRecent(){
+
+let r=JSON.parse(localStorage.getItem("recent")||"[]")
+songs=r
+render(r)
+
 }
 
-audio.addEventListener("timeupdate", ()=>{
-  document.getElementById("progress").value = (audio.currentTime / audio.duration) * 100 || 0;
-});
+function showPlaylist(){
 
-document.getElementById("progress").addEventListener("input",(e)=>{
-  audio.currentTime = (e.target.value/100)*audio.duration;
-});
+let p=JSON.parse(localStorage.getItem("playlist")||"[]")
+songs=p
+render(p)
+
+}
+
+async function play(song){
+
+document.getElementById("player").classList.add("active")
+
+document.getElementById("cover").src=song.cover
+document.getElementById("title").innerText=song.title
+document.getElementById("artist").innerText=song.artist
+
+const res=await fetch(`/api/stream?id=${song.id}`)
+const data=await res.json()
+
+audio.src=data.url
+audio.play()
+
+saveRecent(song)
+
+}
+
+function toggle(){
+
+if(audio.paused) audio.play()
+else audio.pause()
+
+}
+
+function next(){
+
+index=(index+1)%songs.length
+play(songs[index])
+
+}
+
+function prev(){
+
+index=(index-1+songs.length)%songs.length
+play(songs[index])
+
+}
+
+showTrending()

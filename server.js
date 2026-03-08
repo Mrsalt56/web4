@@ -1,75 +1,63 @@
-const express = require("express");
-const fetch = require("node-fetch");
 
-const app = express();
-const SC_CLIENT_ID = process.env.SC_CLIENT_ID;
+import express from "express"
+import fetch from "node-fetch"
 
-app.use(express.static("public"));
+const app=express()
 
-app.get("/api/search", async (req, res) => {
-  const q = req.query.q;
+app.use(express.static("public"))
 
-  try {
-    const url =
-      `https://api-v2.soundcloud.com/search/tracks` +
-      `?q=${encodeURIComponent(q)}` +
-      `&client_id=${SC_CLIENT_ID}` +
-      `&limit=20`;
+const TIDAL_TOKEN="fKuLqPm7IEQaH5wC"
 
-    const r = await fetch(url);
-    const data = await r.json();
+app.get("/api/search",async(req,res)=>{
 
-    if (!data.collection) return res.json([]);
+const q=req.query.q
 
-    const results = data.collection
-      .filter(t => t.media && t.media.transcodings)
-      .map(t => {
-        const progressive = t.media.transcodings.find(
-          tr => tr.format.protocol === "progressive"
-        );
+const r=await fetch(`https://api.tidal.com/v1/search?query=${q}&types=TRACKS&limit=20`,{
+headers:{Authorization:`Bearer ${TIDAL_TOKEN}`}
+})
 
-        if (!progressive) return null;
+const data=await r.json()
 
-        return {
-          id: t.id,
-          title: t.title,
-          artist: t.user.username,
-          artwork: t.artwork_url
-            ? t.artwork_url.replace("-large", "-t500x500")
-            : "",
-          stream_url: progressive.url
-        };
-      })
-      .filter(Boolean);
+const songs=data.tracks.items.map(t=>({
+id:t.id,
+title:t.title,
+artist:t.artist.name,
+cover:`https://resources.tidal.com/images/${t.album.cover.replace(/-/g,"/")}/640x640.jpg`
+}))
 
-    res.json(results);
+res.json(songs)
 
-  } catch (err) {
-    console.error("Search error:", err);
-    res.status(500).json([]);
-  }
-});
+})
 
-app.get("/api/stream", async (req, res) => {
-  try {
-    const streamUrl = `${req.query.url}?client_id=${SC_CLIENT_ID}`;
+app.get("/api/stream",async(req,res)=>{
 
-    const r = await fetch(streamUrl);
-    const data = await r.json();
+const id=req.query.id
 
-    const audioRes = await fetch(data.url);
+const r=await fetch(`https://api.tidal.com/v1/tracks/${id}/streamUrl`,{
+headers:{Authorization:`Bearer ${TIDAL_TOKEN}`}
+})
 
-    res.setHeader("Content-Type", "audio/mpeg");
-    audioRes.body.pipe(res);
+const data=await r.json()
 
-  } catch (err) {
-    console.error("Stream error:", err);
-    res.status(500).end();
-  }
-});
+res.json({url:data.url})
 
-const PORT = process.env.PORT || 3000;
+})
 
-app.listen(PORT, () => {
-  console.log("Running on port", PORT);
-});
+app.get("/api/trending",async(req,res)=>{
+
+const r=await fetch("https://itunes.apple.com/search?term=top&media=music&limit=20")
+const data=await r.json()
+
+const songs=data.results.map(t=>({
+id:t.trackId,
+title:t.trackName,
+artist:t.artistName,
+cover:t.artworkUrl100.replace("100x100","300x300"),
+preview:t.previewUrl
+}))
+
+res.json(songs)
+
+})
+
+app.listen(3000,()=>console.log("Server running"))

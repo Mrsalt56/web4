@@ -3,41 +3,55 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Imp Music - SoundCloud</title>
+<title>Music</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="sidebar">
-  <h1>🎵 Imp Music</h1>
+<div class="app">
+
+<div class="player" id="player">
+
+<div class="logo">♫</div>
+
+<img id="cover">
+
+<div id="title">Nothing Playing</div>
+<div id="artist"></div>
+
+<input type="range" id="progress">
+
+<div class="controls">
+<button onclick="prev()">⏮</button>
+<button onclick="toggle()">▶</button>
+<button onclick="next()">⏭</button>
 </div>
+
+</div>
+
 
 <div class="main">
-  <div class="search-bar">
-    <input id="query" placeholder="Search tracks">
-    <button onclick="search()">Search</button>
-  </div>
-  <h2 id="sectionTitle">Search Results</h2>
-  <div id="grid" class="grid"></div>
+
+<div class="topbar">
+<input id="search" placeholder="Search songs..." onkeydown="if(event.key==='Enter') search()">
 </div>
 
-<div class="player">
-  <img id="cover">
-  <div class="info">
-    <div id="title">Not Playing</div>
-    <div id="artist"></div>
-    <input type="range" id="progress" value="0">
-  </div>
-  <div class="controls">
-    <button onclick="prev()">⏮</button>
-    <button onclick="toggle()">▶</button>
-    <button onclick="next()">⏭</button>
-  </div>
+<div class="tabs">
+<button onclick="showTrending()">Trending</button>
+<button onclick="showRecent()">Recently Played</button>
+<button onclick="showPlaylist()">Playlist</button>
+</div>
+
+<div id="results" class="results"></div>
+
+</div>
+
 </div>
 
 <audio id="audio"></audio>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="app.js"></script>
+
 </body>
 </html>

@@ -1,77 +1,135 @@
-
 let currentList = [];
 let currentIndex = 0;
+
 const audio = document.getElementById("audio");
+const grid = document.getElementById("grid");
+
+/* SEARCH */
 
 async function search() {
-  const q = document.getElementById("query").value;
-  if (!q) return;
-  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-  const data = await res.json();
-  currentList = data;
-  render(data);
-}
 
-function render(list) {
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
-  list.forEach((t,i) => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <img src="${t.artwork}">
-      <div>${t.title}</div>
-      <div style="color:#aaa">${t.artist}</div>`;
-    div.onclick = () => { currentIndex=i; play(); };
-    grid.appendChild(div);
-  });
-}
+  const query = document.getElementById("query").value;
 
-async function play() {
-  const t = currentList[currentIndex];
+  if (!query) return;
 
-  document.getElementById("title").innerText = t.title;
-  document.getElementById("artist").innerText = t.artist;
-  document.getElementById("cover").src = t.artwork;
+  try {
 
-  const response = await fetch(`/api/stream?url=${encodeURIComponent(t.stream_url)}`);
-  const data = await response.json();
+    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
 
-  const audio = document.getElementById("audio");
+    const data = await res.json();
 
-  if (Hls.isSupported()) {
-    const hls = new Hls();
-    hls.loadSource(data.url);
-    hls.attachMedia(audio);
-    hls.on(Hls.Events.MANIFEST_PARSED, function () {
-      audio.play();
-    });
-  } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-    audio.src = data.url;
-    audio.play();
+    currentList = data;
+
+    renderResults(data);
+
+  } catch (err) {
+
+    console.error("Search failed:", err);
+
   }
+
 }
+
+
+/* RENDER RESULTS */
+
+function renderResults(list) {
+
+  grid.innerHTML = "";
+
+  list.forEach((track, index) => {
+
+    const card = document.createElement("div");
+
+    card.className = "card";
+
+    card.innerHTML = `
+      <img src="${track.artwork || ""}">
+      <div>${track.title}</div>
+      <div style="color:#aaa">${track.artist}</div>
+    `;
+
+    card.onclick = () => {
+
+      currentIndex = index;
+
+      playTrack();
+
+    };
+
+    grid.appendChild(card);
+
+  });
+
+}
+
+
+/* PLAY TRACK */
+
+async function playTrack() {
+
+  const track = currentList[currentIndex];
+
+  document.getElementById("title").innerText = track.title;
+  document.getElementById("artist").innerText = track.artist;
+  document.getElementById("cover").src = track.artwork || "";
+
+  if (track.source === "soundcloud") {
+
+    const res = await fetch(`/api/stream?url=${encodeURIComponent(track.stream_url)}`);
+
+    const data = await res.json();
+
+    if (Hls.isSupported()) {
+
+      const hls = new Hls();
+
+      hls.loadSource(data.url);
+
+      hls.attachMedia(audio);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        audio.play();
+      });
+
+    }
+
+  } else {
+
+    audio.src = track.stream_url;
+
+    audio.play();
+
+  }
+
+}
+
+
+/* CONTROLS */
 
 function toggle() {
-  audio.paused ? audio.play() : audio.pause();
+
+  if (audio.paused) audio.play();
+  else audio.pause();
+
 }
 
 function next() {
+
   if (!currentList.length) return;
-  currentIndex = (currentIndex+1)%currentList.length;
-  play();
+
+  currentIndex = (currentIndex + 1) % currentList.length;
+
+  playTrack();
+
 }
 
 function prev() {
+
   if (!currentList.length) return;
-  currentIndex = (currentIndex-1+currentList.length)%currentList.length;
-  play();
+
+  currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
+
+  playTrack();
+
 }
-
-audio.addEventListener("timeupdate", ()=>{
-  document.getElementById("progress").value = (audio.currentTime / audio.duration) * 100 || 0;
-});
-
-document.getElementById("progress").addEventListener("input",(e)=>{
-  audio.currentTime = (e.target.value/100)*audio.duration;
-});

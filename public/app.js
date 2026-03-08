@@ -1,117 +1,135 @@
+let currentList = [];
+let currentIndex = 0;
 
-const audio=document.getElementById("audio")
-const results=document.getElementById("results")
+const audio = document.getElementById("audio");
+const grid = document.getElementById("grid");
 
-let songs=[]
-let index=0
-let page=0
-let query=""
+/* SEARCH */
 
-function saveRecent(song){
-let r=JSON.parse(localStorage.getItem("recent")||"[]")
-r.unshift(song)
-localStorage.setItem("recent",JSON.stringify(r.slice(0,30)))
-}
+async function search() {
 
-function savePlaylist(song){
-let p=JSON.parse(localStorage.getItem("playlist")||"[]")
-p.push(song)
-localStorage.setItem("playlist",JSON.stringify(p))
-}
+  const query = document.getElementById("query").value;
 
-function render(list){
+  if (!query) return;
 
-results.innerHTML=""
+  try {
 
-list.forEach(song=>{
+    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
 
-const div=document.createElement("div")
-div.className="card"
+    const data = await res.json();
 
-div.innerHTML=`<img src="${song.cover}">`
+    currentList = data;
 
-div.onclick=()=>play(song)
+    renderResults(data);
 
-results.appendChild(div)
+  } catch (err) {
 
-})
+    console.error("Search failed:", err);
+
+  }
 
 }
 
-async function search(){
 
-query=document.getElementById("search").value
-page=0
+/* RENDER RESULTS */
 
-const res=await fetch(`/api/search?q=${encodeURIComponent(query)}`)
-const data=await res.json()
+function renderResults(list) {
 
-songs=data
-render(songs)
+  grid.innerHTML = "";
 
-}
+  list.forEach((track, index) => {
 
-async function showTrending(){
+    const card = document.createElement("div");
 
-const res=await fetch("/api/trending")
-songs=await res.json()
-render(songs)
+    card.className = "card";
 
-}
+    card.innerHTML = `
+      <img src="${track.artwork || ""}">
+      <div>${track.title}</div>
+      <div style="color:#aaa">${track.artist}</div>
+    `;
 
-function showRecent(){
+    card.onclick = () => {
 
-let r=JSON.parse(localStorage.getItem("recent")||"[]")
-songs=r
-render(r)
+      currentIndex = index;
 
-}
+      playTrack();
 
-function showPlaylist(){
+    };
 
-let p=JSON.parse(localStorage.getItem("playlist")||"[]")
-songs=p
-render(p)
+    grid.appendChild(card);
+
+  });
 
 }
 
-async function play(song){
 
-document.getElementById("player").classList.add("active")
+/* PLAY TRACK */
 
-document.getElementById("cover").src=song.cover
-document.getElementById("title").innerText=song.title
-document.getElementById("artist").innerText=song.artist
+async function playTrack() {
 
-const res=await fetch(`/api/stream?id=${song.id}`)
-const data=await res.json()
+  const track = currentList[currentIndex];
 
-audio.src=data.url
-audio.play()
+  document.getElementById("title").innerText = track.title;
+  document.getElementById("artist").innerText = track.artist;
+  document.getElementById("cover").src = track.artwork || "";
 
-saveRecent(song)
+  if (track.source === "soundcloud") {
+
+    const res = await fetch(`/api/stream?url=${encodeURIComponent(track.stream_url)}`);
+
+    const data = await res.json();
+
+    if (Hls.isSupported()) {
+
+      const hls = new Hls();
+
+      hls.loadSource(data.url);
+
+      hls.attachMedia(audio);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        audio.play();
+      });
+
+    }
+
+  } else {
+
+    audio.src = track.stream_url;
+
+    audio.play();
+
+  }
 
 }
 
-function toggle(){
 
-if(audio.paused) audio.play()
-else audio.pause()
+/* CONTROLS */
 
-}
+function toggle() {
 
-function next(){
-
-index=(index+1)%songs.length
-play(songs[index])
+  if (audio.paused) audio.play();
+  else audio.pause();
 
 }
 
-function prev(){
+function next() {
 
-index=(index-1+songs.length)%songs.length
-play(songs[index])
+  if (!currentList.length) return;
+
+  currentIndex = (currentIndex + 1) % currentList.length;
+
+  playTrack();
 
 }
 
-showTrending()
+function prev() {
+
+  if (!currentList.length) return;
+
+  currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
+
+  playTrack();
+
+}

@@ -32,19 +32,12 @@
 
 
 <div class="main">
-
-<div class="topbar">
-<input id="search" placeholder="Search songs..." onkeydown="if(event.key==='Enter') search()">
-</div>
-
-<div class="tabs">
-<button onclick="showTrending()">Trending</button>
-<button onclick="showRecent()">Recently Played</button>
-<button onclick="showPlaylist()">Playlist</button>
-</div>
-
-<div id="results" class="results"></div>
-
+  <div class="search-bar">
+    <input id="query" placeholder="Search music">
+    <button onclick="search()">Search</button>
+  </div>
+  <h2 id="sectionTitle">Search Results</h2>
+  <div id="grid" class="grid"></div>
 </div>
 
 </div>

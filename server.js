@@ -48,34 +48,34 @@ SEARCH SONGS
 --------------------------------
 */
 
-app.get("/api/search", async (req, res) => {
-
-try {
+app.get("/api/search/tidal", async (req,res)=>{
 
 const q = req.query.q
 
-if(!q) return res.json([])
+try{
 
 const r = await fetch(
-`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=25`
-)
+`https://api.tidal.com/v1/search?query=${encodeURIComponent(q)}&limit=20`,
+{
+headers:{
+Authorization:`Bearer ${process.env.TIDAL_TOKEN}`
+}
+})
 
 const data = await r.json()
 
-const songs = data.results.map(track => ({
-id: track.trackId,
-title: track.trackName,
-artist: track.artistName,
-cover: track.artworkUrl100.replace("100x100","400x400"),
-url: track.previewUrl
+const songs = data.tracks.items.map(t=>({
+id:t.id,
+title:t.title,
+artist:t.artist.name,
+cover:`https://resources.tidal.com/images/${t.album.cover.replace(/-/g,"/")}/640x640.jpg`
 }))
 
 res.json(songs)
 
-} catch(err) {
+}catch(e){
 
-console.error(err)
-res.status(500).json({error:"Search failed"})
+res.status(500).json({error:"tidal search failed"})
 
 }
 

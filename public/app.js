@@ -1,8 +1,7 @@
 
-const results=document.getElementById("results")
 const searchInput=document.getElementById("search")
-
-const player=document.getElementById("ytplayer")
+const resultsDiv=document.getElementById("results")
+const player=document.getElementById("player")
 
 let queue=[]
 let index=0
@@ -14,10 +13,11 @@ if(e.key==="Enter"){
 const q=searchInput.value
 
 const r=await fetch(`/api/search?q=${encodeURIComponent(q)}`)
-const songs=await r.json()
+const data=await r.json()
 
-queue=songs
-render(songs)
+queue=data
+
+render(data)
 
 }
 
@@ -25,36 +25,34 @@ render(songs)
 
 function render(list){
 
-results.innerHTML=""
+resultsDiv.innerHTML=""
 
-list.forEach(song=>{
+list.forEach(v=>{
 
 const div=document.createElement("div")
 div.className="card"
 
-div.innerHTML=`<img src="${song.cover}">`
+div.innerHTML=`
+<img src="${v.thumbnail}">
+<p>${v.title}</p>
+`
 
-div.onclick=()=>play(song)
+div.onclick=()=>play(v)
 
-results.appendChild(div)
+resultsDiv.appendChild(div)
 
 })
 
 }
 
-async function play(song){
+function play(video){
 
-index=queue.findIndex(x=>x.title===song.title)
+index=queue.findIndex(x=>x.videoId===video.videoId)
 
-const query=`${song.title} ${song.artist} official audio`
+player.src=`https://www.youtube.com/embed/${video.videoId}?autoplay=1`
 
-const r=await fetch(`/api/youtube?q=${encodeURIComponent(query)}`)
-const data=await r.json()
-
-player.src=`https://www.youtube.com/embed/${data.videoId}?autoplay=1`
-
-document.getElementById("title").innerText=song.title
-document.getElementById("artist").innerText=song.artist
+document.getElementById("title").innerText=video.title
+document.getElementById("artist").innerText=video.channel
 
 }
 

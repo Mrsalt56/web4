@@ -1,5 +1,5 @@
 {
-  "name": "yt-music-system",
+  "name": "youtube-search-music-player",
   "type": "module",
   "dependencies": {
     "express": "^4.19.2",

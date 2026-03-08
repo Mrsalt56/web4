@@ -1,21 +1,20 @@
+const searchInput = document.getElementById("search")
+const resultsDiv = document.getElementById("results")
+const player = document.getElementById("player")
 
-const searchInput=document.getElementById("search")
-const resultsDiv=document.getElementById("results")
-const player=document.getElementById("player")
+let queue = []
+let index = 0
 
-let queue=[]
-let index=0
+searchInput.addEventListener("keydown", async e => {
 
-searchInput.addEventListener("keydown", async e=>{
+if(e.key === "Enter"){
 
-if(e.key==="Enter"){
+const q = searchInput.value
 
-const q=searchInput.value
+const r = await fetch(`/api/search?q=${encodeURIComponent(q)}`)
+const data = await r.json()
 
-const r=await fetch(`/api/search?q=${encodeURIComponent(q)}`)
-const data=await r.json()
-
-queue=data
+queue = data
 
 render(data)
 
@@ -25,19 +24,19 @@ render(data)
 
 function render(list){
 
-resultsDiv.innerHTML=""
+resultsDiv.innerHTML = ""
 
-list.forEach(v=>{
+list.forEach(v => {
 
-const div=document.createElement("div")
-div.className="card"
+const div = document.createElement("div")
+div.className = "card"
 
-div.innerHTML=`
+div.innerHTML = `
 <img src="${v.thumbnail}">
 <p>${v.title}</p>
 `
 
-div.onclick=()=>play(v)
+div.onclick = () => play(v)
 
 resultsDiv.appendChild(div)
 
@@ -47,25 +46,25 @@ resultsDiv.appendChild(div)
 
 function play(video){
 
-index=queue.findIndex(x=>x.videoId===video.videoId)
+index = queue.findIndex(x => x.videoId === video.videoId)
 
-player.src=`https://www.youtube.com/embed/${video.videoId}?autoplay=1`
+player.src = `https://www.youtube.com/embed/${video.videoId}?autoplay=1`
 
-document.getElementById("title").innerText=video.title
-document.getElementById("artist").innerText=video.channel
+document.getElementById("title").innerText = video.title
+document.getElementById("artist").innerText = video.channel
 
 }
 
 function next(){
 
-index=(index+1)%queue.length
+index = (index + 1) % queue.length
 play(queue[index])
 
 }
 
 function prev(){
 
-index=(index-1+queue.length)%queue.length
+index = (index - 1 + queue.length) % queue.length
 play(queue[index])
 
 }

@@ -1,135 +1,73 @@
-let currentList = [];
-let currentIndex = 0;
 
-const audio = document.getElementById("audio");
-const grid = document.getElementById("grid");
+const results=document.getElementById("results")
+const searchInput=document.getElementById("search")
 
-/* SEARCH */
+const player=document.getElementById("ytplayer")
 
-async function search() {
+let queue=[]
+let index=0
 
-  const query = document.getElementById("query").value;
+searchInput.addEventListener("keydown", async e=>{
 
-  if (!query) return;
+if(e.key==="Enter"){
 
-  try {
+const q=searchInput.value
 
-    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+const r=await fetch(`/api/search?q=${encodeURIComponent(q)}`)
+const songs=await r.json()
 
-    const data = await res.json();
-
-    currentList = data;
-
-    renderResults(data);
-
-  } catch (err) {
-
-    console.error("Search failed:", err);
-
-  }
+queue=songs
+render(songs)
 
 }
 
+})
 
-/* RENDER RESULTS */
+function render(list){
 
-function renderResults(list) {
+results.innerHTML=""
 
-  grid.innerHTML = "";
+list.forEach(song=>{
 
-  list.forEach((track, index) => {
+const div=document.createElement("div")
+div.className="card"
 
-    const card = document.createElement("div");
+div.innerHTML=`<img src="${song.cover}">`
 
-    card.className = "card";
+div.onclick=()=>play(song)
 
-    card.innerHTML = `
-      <img src="${track.artwork || ""}">
-      <div>${track.title}</div>
-      <div style="color:#aaa">${track.artist}</div>
-    `;
+results.appendChild(div)
 
-    card.onclick = () => {
-
-      currentIndex = index;
-
-      playTrack();
-
-    };
-
-    grid.appendChild(card);
-
-  });
+})
 
 }
 
+async function play(song){
 
-/* PLAY TRACK */
+index=queue.findIndex(x=>x.title===song.title)
 
-async function playTrack() {
+const query=`${song.title} ${song.artist} official audio`
 
-  const track = currentList[currentIndex];
+const r=await fetch(`/api/youtube?q=${encodeURIComponent(query)}`)
+const data=await r.json()
 
-  document.getElementById("title").innerText = track.title;
-  document.getElementById("artist").innerText = track.artist;
-  document.getElementById("cover").src = track.artwork || "";
+player.src=`https://www.youtube.com/embed/${data.videoId}?autoplay=1`
 
-  if (track.source === "soundcloud") {
-
-    const res = await fetch(`/api/stream?url=${encodeURIComponent(track.stream_url)}`);
-
-    const data = await res.json();
-
-    if (Hls.isSupported()) {
-
-      const hls = new Hls();
-
-      hls.loadSource(data.url);
-
-      hls.attachMedia(audio);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        audio.play();
-      });
-
-    }
-
-  } else {
-
-    audio.src = track.stream_url;
-
-    audio.play();
-
-  }
+document.getElementById("title").innerText=song.title
+document.getElementById("artist").innerText=song.artist
 
 }
 
+function next(){
 
-/* CONTROLS */
-
-function toggle() {
-
-  if (audio.paused) audio.play();
-  else audio.pause();
+index=(index+1)%queue.length
+play(queue[index])
 
 }
 
-function next() {
+function prev(){
 
-  if (!currentList.length) return;
-
-  currentIndex = (currentIndex + 1) % currentList.length;
-
-  playTrack();
-
-}
-
-function prev() {
-
-  if (!currentList.length) return;
-
-  currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
-
-  playTrack();
+index=(index-1+queue.length)%queue.length
+play(queue[index])
 
 }

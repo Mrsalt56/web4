@@ -1,170 +1,90 @@
-import express from "express";
-import fetch from "node-fetch";
 
-const app = express();
+import express from "express"
+import fetch from "node-fetch"
 
-const SC_CLIENT_ID = process.env.SC_CLIENT_ID;
+const app = express()
+const PORT = process.env.PORT || 3000
 
-const app=express()
+app.use(express.static("public"))
+app.use(express.json())
 
-/* SEARCH MULTIPLE SOURCES */
+/*
+Search songs using iTunes metadata
+*/
 
-app.get("/api/search", async (req, res) => {
+app.get("/api/search", async (req,res)=>{
 
-  const q = req.query.q;
+try{
 
-  if (!q) {
-    return res.json([]);
-  }
+const q=req.query.q
+if(!q) return res.json([])
 
-  const results = [];
+const r = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=25`)
+const data = await r.json()
 
-  try {
-
-    /* ---------- SOUND CLOUD ---------- */
-
-    try {
-
-      const sc = await fetch(
-        `https://api-v2.soundcloud.com/search/tracks?q=${encodeURIComponent(q)}&client_id=${SC_CLIENT_ID}&limit=10`,
-        { headers: { "User-Agent": "Mozilla/5.0" } }
-      );
-
-      const scData = await sc.json();
-
-      if (scData.collection) {
-
-        scData.collection.forEach(track => {
-
-          const hls = track.media?.transcodings?.find(
-            t => t.format.protocol === "hls"
-          );
-
-          if (!hls) return;
-
-          results.push({
-            title: track.title,
-            artist: track.user.username,
-            artwork: track.artwork_url
-              ? track.artwork_url.replace("-large", "-t500x500")
-              : "",
-            stream_url: hls.url,
-            source: "soundcloud"
-          });
-
-        });
-
-      }
-
-    } catch {
-      console.log("SoundCloud failed");
-    }
-
-    /* ---------- JAMENDO ---------- */
-
-    try {
-
-      const jam = await fetch(
-        `https://api.jamendo.com/v3.0/tracks/?client_id=440d4f5e&format=json&limit=10&namesearch=${encodeURIComponent(q)}`
-      );
-
-      const jamData = await jam.json();
-
-      if (jamData.results) {
-
-        jamData.results.forEach(track => {
-
-          results.push({
-            title: track.name,
-            artist: track.artist_name,
-            artwork: track.album_image,
-            stream_url: track.audio,
-            source: "jamendo"
-          });
-
-        });
-
-      }
-
-    } catch {
-      console.log("Jamendo failed");
-    }
-
-    /* ---------- INTERNET ARCHIVE ---------- */
-
-    try {
-
-      const archive = await fetch(
-        `https://archive.org/advancedsearch.php?q=${encodeURIComponent(q)}&output=json&rows=10`
-      );
-
-      const archData = await archive.json();
-
-      if (archData.response?.docs) {
-
-        archData.response.docs.forEach(track => {
-
-          if (!track.identifier) return;
-
-          results.push({
-            title: track.title || "Unknown",
-            artist: track.creator || "Unknown",
-            artwork: "",
-            stream_url: `https://archive.org/download/${track.identifier}/${track.identifier}.mp3`,
-            source: "archive"
-          });
-
-        });
-
-      }
-
-    } catch {
-      console.log("Archive failed");
-    }
+const songs=data.results.map(t=>({
+title:t.trackName,
+artist:t.artistName,
+cover:t.artworkUrl100.replace("100x100","400x400")
+}))
 
 res.json(songs)
 
-  } catch (err) {
+}catch(e){
+console.error(e)
+res.status(500).json({error:"search failed"})
+}
 
-    console.error("Search error:", err);
-    res.status(500).json([]);
+})
 
-  }
+/*
+Trending songs
+*/
 
-});
+app.get("/api/trending", async (req,res)=>{
 
+const r = await fetch("https://itunes.apple.com/search?term=top&media=music&limit=25")
+const data = await r.json()
 
-/* STREAM SOUNDCLOUD HLS */
+const songs=data.results.map(t=>({
+title:t.trackName,
+artist:t.artistName,
+cover:t.artworkUrl100.replace("100x100","400x400")
+}))
 
-app.get("/api/stream", async (req, res) => {
+res.json(songs)
 
-  try {
+})
 
-    const url = req.query.url;
+/*
+YouTube search
+Requires API key
+*/
 
-    if (!url) {
-      return res.status(400).json({});
-    }
+app.get("/api/youtube", async (req,res)=>{
 
-    const stream = await fetch(`${url}&client_id=${SC_CLIENT_ID}`);
-    const data = await stream.json();
+try{
 
-    res.json({ url: data.url });
+const q=req.query.q
 
-  } catch (err) {
+const r = await fetch(
+`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q=${encodeURIComponent(q)}&key=${process.env.YT_KEY}`
+)
 
-    console.error("Stream error:", err);
-    res.status(500).json({});
+const data = await r.json()
 
-  }
+const videoId=data.items[0].id.videoId
 
-});
+res.json({videoId})
 
+}catch(e){
 
-/* START SERVER */
+res.status(500).json({error:"youtube search failed"})
 
-const PORT = process.env.PORT || 3000;
+}
 
-app.listen(PORT, () => {
-  console.log("Server running on port", PORT);
-});
+})
+
+app.listen(PORT,()=>{
+console.log("Server running on port",PORT)
+})

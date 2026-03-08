@@ -3,46 +3,38 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Music</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Music Player</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div class="app">
 
-<div class="player" id="player">
+<div class="player">
 
-<div class="logo">♫</div>
+<iframe id="ytplayer" frameborder="0" allow="autoplay"></iframe>
 
-<img id="cover">
-
-<div id="title">Nothing Playing</div>
-<div id="artist"></div>
-
-<input type="range" id="progress">
+<h2 id="title">Nothing Playing</h2>
+<p id="artist"></p>
 
 <div class="controls">
-<button onclick="prev()">⏮</button>
-<button onclick="toggle()">▶</button>
-<button onclick="next()">⏭</button>
+<button onclick="prev()">Prev</button>
+<button onclick="next()">Next</button>
 </div>
 
 </div>
-
 
 <div class="main">
-  <div class="search-bar">
-    <input id="query" placeholder="Search music">
-    <button onclick="search()">Search</button>
-  </div>
-  <h2 id="sectionTitle">Search Results</h2>
-  <div id="grid" class="grid"></div>
-</div>
+
+<input id="search" placeholder="Search music">
+
+<h3>Results</h3>
+<div id="results"></div>
 
 </div>
 
-<audio id="audio"></audio>
+</div>
 
 <script src="app.js"></script>
 

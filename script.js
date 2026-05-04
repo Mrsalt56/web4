@@ -161,6 +161,7 @@ const games = [
 { title: "Highway racer 2", genre: "Racing", img: "images/highwayr2.jpg", link: "games/highway2/" },
 { title: "Polytrack", genre: "Racing", img: "images/poly-track.png", link: "games/polytrack/" },
 { title: "Fire blob", genre: "Puzzle", img: "images/fireb.jpg", link: "games/fireb/" },
+{ title: "Incredibox", genre: "Rhythm", img: "images/credi.jpg", link: "games/credi/" },
   ];
 
 // AUTO SORT GAMES BY GENRE

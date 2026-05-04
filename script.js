@@ -626,3 +626,29 @@ generateBubbles(parseInt(bubbleCount.value));
 // Init
 loadAppearance();
 generateBubbles(bubbleCount.value);
+
+const gameSearch = document.getElementById("gameSearch");
+
+if (gameSearch) {
+  gameSearch.addEventListener("input", () => {
+    const term = gameSearch.value.toLowerCase();
+
+    document.querySelectorAll(".game-card").forEach(card => {
+      const title = card.innerText.toLowerCase();
+      card.style.display = title.includes(term) ? "block" : "none";
+    });
+  });
+}
+
+const movieSearch = document.getElementById("movieSearch");
+
+if (movieSearch) {
+  movieSearch.addEventListener("input", () => {
+    const term = movieSearch.value.toLowerCase();
+
+    document.querySelectorAll(".movie-card").forEach(card => {
+      const title = card.dataset.title.toLowerCase();
+      card.style.display = title.includes(term) ? "block" : "none";
+    });
+  });
+}

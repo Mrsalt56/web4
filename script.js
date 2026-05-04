@@ -628,14 +628,50 @@ loadAppearance();
 generateBubbles(bubbleCount.value);
 
 const gameSearch = document.getElementById("gameSearch");
+const resultsContainer = document.getElementById("gameSearchResults");
+const genresContainer = document.getElementById("gamesContainer");
 
 if (gameSearch) {
   gameSearch.addEventListener("input", () => {
-    const term = gameSearch.value.toLowerCase();
+    const term = gameSearch.value.toLowerCase().trim();
 
-    document.querySelectorAll(".game-card").forEach(card => {
-      const title = card.innerText.toLowerCase();
-      card.style.display = title.includes(term) ? "block" : "none";
+    // Clear previous results
+    resultsContainer.innerHTML = "";
+
+    if (term === "") {
+      // Show genres again
+      resultsContainer.style.display = "none";
+      genresContainer.style.display = "block";
+      return;
+    }
+
+    // Hide genres
+    genresContainer.style.display = "none";
+    resultsContainer.style.display = "flex";
+
+    // Filter games
+    const filtered = games.filter(game =>
+      game.title.toLowerCase().includes(term)
+    );
+
+    if (filtered.length === 0) {
+      resultsContainer.innerHTML = "<p>No games found</p>";
+    }
+    
+    // Show results
+    filtered.forEach(game => {
+      const card = document.createElement("div");
+      card.className = "game-card";
+      card.innerHTML = `
+        <img src="${game.img}">
+        <h3>${game.title}</h3>
+      `;
+
+      card.addEventListener("click", () => {
+        window.open(game.link, "_blank");
+      });
+
+      resultsContainer.appendChild(card);
     });
   });
 }

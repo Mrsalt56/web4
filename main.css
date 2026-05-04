@@ -448,3 +448,21 @@ body {
   background: rgba(0,120,255,0.2);
   animation: float linear infinite;
 }
+
+.search-bar {
+  display: block;
+  margin: 0 auto 30px;
+  padding: 10px 15px;
+  width: 80%;
+  max-width: 400px;
+
+  border-radius: 10px;
+  border: none;
+  outline: none;
+
+  font-size: 1rem;
+  background: #111;
+  color: white;
+
+  box-shadow: 0 0 10px rgba(0,120,255,0.3);
+}

@@ -94,17 +94,17 @@ const games = [
 { title: "HexGL", genre: "Racing", img: "images/hexgl.jpg", link: "games/hexgl/" },
 { title: "Hextris", genre: "Puzzle", img: "images/hextris.jpg", link: "games/hextris/" },
 { title: "Hill Racing", genre: "Racing", img: "images/bike-racing-3.jpg", link: "games/hill-racing/" },
-{ title: "Hole.io", genre: "Arcade", img: "images/Hole.io.webp", link: "games/hole.io/" },
+{ title: "Hole.io", genre: "Multiplayer", img: "images/Hole.io.webp", link: "games/hole.io/" },
 { title: "Icy Head", genre: "Arcade", img: "images/icyhead.jpg", link: "games/icy head/" },
 { title: "Impossible Quiz", genre: "Puzzle", img: "images/quiz.jpg", link: "games/impossiblequiz/" },
 { title: "Level Devil", genre: "Puzzle", img: "images/devil.jpg", link: "games/leveld2/" },
 { title: "Madalin Cars Multiplayer", genre: "Racing", img: "images/madalin.avif", link: "games/madalin-cars-multiplayer/" },
 { title: "Madalin Stunt Cars 2", genre: "Racing", img: "images/madalin2.avif", link: "games/madalin-stunt-cars-2/" },
 { title: "Madness Combat", genre: "Action", img: "images/Madness.webp", link: "games/madness/" },
-{ title: "Minecraft", genre: "Simulation", img: "images/mc1.jpg", link: "games/mc/" },
+{ title: "Minecraft", genre: "Multiplayer", img: "images/mc1.jpg", link: "games/mc/" },
 { title: "Microsoft Flight Simulator", genre: "Simulation", img: "images/Microsoft flight.png", link: "games/microsoft-flight-simulator/" },
 { title: "Minesweeper", genre: "Puzzle", img: "games/minesweeper/img/minesweeper.png", link: "games/minesweeper/" },
-{ title: "MonkeyMart", genre: "Simulation", img: "images/monkey.png", link: "games/MonkeyMart/" },
+{ title: "MonkeyMart", genre: "Idle", img: "images/monkey.png", link: "games/MonkeyMart/" },
 { title: "Moto X3M", genre: "Racing", img: "images/moto-x3m.jpg", link: "games/moto-x3m/" },
 { title: "Moto X3M Pool Party", genre: "Racing", img: "images/moto-x3m-pool-party.png", link: "games/moto-x3m-pool-party/" },
 { title: "Moto X3M Spooky Land", genre: "Racing", img: "images/MotoX3M-Spookyland.jpg", link: "games/moto-x3m-spooky-land/" },
@@ -143,7 +143,25 @@ const games = [
 { title: "World's Hardest Game", genre: "Puzzle", img: "games/worlds-hardest-game/images/splash.jpg", link: "games/worlds-hardest-game/" },
 { title: "Zombotron", genre: "Shooter", img: "images/zombotron.webp", link: "games/zombotron/" },
 { title: "Zombotron 2", genre: "Shooter", img: "images/zombotron 2.jpg", link: "games/zombotron-2/" },
-];
+{ title: "Blocky snakes", genre: "Multiplayer", img: "images/blocksnake.jpg", link: "games/blocksnake/" },
+{ title: "Paper.io", genre: "Multiplayer", img: "images/paper2.jpg", link: "games/paperio2/" },
+{ title: "Gun mayhem", genre: "Multiplayer", img: "images/gunm1.png", link: "games/gmayhem/" },
+{ title: "Tube jumpers", genre: "Multiplayer", img: "images/tube.avif", link: "games/tube-jumpers/" },
+{ title: "Pixel gun 3d", genre: "Multiplayer", img: "images/pixel.webp", link: "games/pixelg/" },
+{ title: "Snow battle", genre: "Multiplayer", img: "images/pixel.webp", link: "games/snowbattle/" },
+{ title: "Block the pig", genre: "Puzzle", img: "images/bpig.jpg", link: "games/bpig/" },
+{ title: "Friday night funkin", genre: "Rhythm", img: "images/bpig.jpg", link: "games/fnf/" },
+{ title: "Jetpack joyride", genre: "Strategy", img: "images/bjetpack.png", link: "games/jetpack/" },
+{ title: "Sprunki Rhythm", genre: "Rhythm", img: "images/bpig.jpg", link: "games/sprunki/" },
+{ title: "Magic tiles", genre: "Rhythm", img: "images/magictiles.png", link: "games/magictiles/" },
+{ title: "OSU!", genre: "Rhythm", img: "images/magictiles.png", link: "games/osu/" },
+{ title: "Tiny fishing", genre: "Idle", img: "images/tinyfishing.png", link: "games/tinyfishing/" },
+{ title: "Sky riders", genre: "Racing", img: "images/skyriders.jpg", link: "games/skyriders/" },
+{ title: "Highway racer 1", genre: "Racing", img: "images/highwayr.png", link: "games/highwayr/" },
+{ title: "Highway racer 2", genre: "Racing", img: "images/highwayr2.jpg", link: "games/highway2/" },
+{ title: "Polytrack", genre: "Racing", img: "images/poly-track.png", link: "games/polytrack/" },
+{ title: "Fire blob", genre: "Puzzle", img: "images/fireb.jpg", link: "games/fireb/" },
+  ];
 
 // AUTO SORT GAMES BY GENRE
 const container = document.getElementById("gamesContainer");
@@ -626,3 +644,65 @@ generateBubbles(parseInt(bubbleCount.value));
 // Init
 loadAppearance();
 generateBubbles(bubbleCount.value);
+
+const gameSearch = document.getElementById("gameSearch");
+const resultsContainer = document.getElementById("gameSearchResults");
+const genresContainer = document.getElementById("gamesContainer");
+
+if (gameSearch) {
+  gameSearch.addEventListener("input", () => {
+    const term = gameSearch.value.toLowerCase().trim();
+
+    // Clear previous results
+    resultsContainer.innerHTML = "";
+
+    if (term === "") {
+      // Show genres again
+      resultsContainer.style.display = "none";
+      genresContainer.style.display = "block";
+      return;
+    }
+
+    // Hide genres
+    genresContainer.style.display = "none";
+    resultsContainer.style.display = "flex";
+
+    // Filter games
+    const filtered = games.filter(game =>
+      game.title.toLowerCase().includes(term)
+    );
+
+    if (filtered.length === 0) {
+      resultsContainer.innerHTML = "<p>No games found</p>";
+    }
+    
+    // Show results
+    filtered.forEach(game => {
+      const card = document.createElement("div");
+      card.className = "game-card";
+      card.innerHTML = `
+        <img src="${game.img}">
+        <h3>${game.title}</h3>
+      `;
+
+      card.addEventListener("click", () => {
+        window.open(game.link, "_blank");
+      });
+
+      resultsContainer.appendChild(card);
+    });
+  });
+}
+
+const movieSearch = document.getElementById("movieSearch");
+
+if (movieSearch) {
+  movieSearch.addEventListener("input", () => {
+    const term = movieSearch.value.toLowerCase();
+
+    document.querySelectorAll(".movie-card").forEach(card => {
+      const title = card.dataset.title.toLowerCase();
+      card.style.display = title.includes(term) ? "block" : "none";
+    });
+  });
+}
